@@ -133,6 +133,8 @@
   --falcon-form-invalid-border-color: #e63757;
 }
 
+
+
 [data-bs-theme=dark] {
   color-scheme: dark;
   --falcon-body-color: #9da9bb;

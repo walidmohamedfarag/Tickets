@@ -5,9 +5,9 @@ namespace Cinema_Ticket.DataAccess
     public class ApplicationDB : DbContext
     {
         public DbSet<Cinema> Cinemas { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<MovieActor> MovieActors { get; set; }
+        public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieSubImg> MovieSubImgs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

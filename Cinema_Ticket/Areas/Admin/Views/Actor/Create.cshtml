@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Movie>
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">Add Actor</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" name="FullName">
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input class="form-control" type="file" name="img">
+                </div>
+                <div class="mb-3">
+                    <label for="movie" class="form-label">Movie</label>
+                    <select name="movieId" class="form-select" placeholder="Select Movie">
+                        @foreach (var movie in Model)
+                        {
+                            <option value="@movie.Id">@movie.Name</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

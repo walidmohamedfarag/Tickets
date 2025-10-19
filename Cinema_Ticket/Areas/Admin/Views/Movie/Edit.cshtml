@@ -1,0 +1,151 @@
+﻿@model ModelVM
+
+﻿<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">Edit Movie</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" name="Name" value="@Model.Movie.Name">
+                </div>
+                <div class="mb-3">
+                    <label for="Type" class="form-label">Type</label>
+                    <select name="Type" class="form-select" placeholder="Select Type">
+                        @foreach (var type in Enum.GetValues(typeof(MovieType)))
+                        {
+                            if (type == Model.Movie.Type)
+                            {
+
+                                <option value="@type" selected>@type</option>
+                            }
+                            else
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input class="form-control" name="Price" value="@Model.Movie.Price">
+                </div>
+                <div class="mb-3">
+                    <label for="Date_Time" class="form-label">Date Time</label>
+                    <input class="form-control" type="datetime-local" name="Date_Time" value="@Model.Movie.Date_Time">
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Main Image</label>
+                    <input class="form-control" type="file" name="mainimg" value="@Model.Movie.MainImg" onchange="previewImage(event)">
+                </div>
+                <div class="mb-3">
+                    <img id="preview"
+                         src="~/MovieImg/@Model.Movie.MainImg"
+                         alt="Current Image"
+                         style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+                </div>
+                <div class="mb-3">
+                    <label for="subImgs" class="form-label">Sub Images</label>
+                    <input class="form-control" type="file" name="subImgs" onchange="previewImage(event)" multiple>
+                </div>
+                @foreach (var simg in Model.subImgs)
+                {
+
+                    <div class="mb-3" style="position:relative; display: inline-block">
+                        <img id="preview"
+                             src="~/MovieImg/SubImges/@simg.Img"
+                             alt="Current Image"
+                             style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+                        <a href="/Admin/Movie/DeleteSubImg?id=@simg.MovieId&img=@simg.Img" id="addButtonColor" class="btn btn-sm btn-danger"
+                           style="position: absolute; top: 5px; right: 5px">X</a>
+
+                    </div>
+                }
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a description here" style="height: 100px" name="Description">@Model.Movie.Description</textarea>
+                        <label for="description">You Description Here...</label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Cinema" class="form-label">Cinema</label>
+                        <select name="CinemaId" class="form-select" placeholder="Select Cinema">
+                            @foreach (var cinema in Model.Cinemas)
+                            {
+                                if (cinema.Id == Model.Movie.CinemaId)
+                                {
+
+                                    <option value="@cinema.Id" selected>@cinema.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@cinema.Id">@cinema.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="Status" class="form-select">
+                            @if (Model.Movie.Status)
+                            {
+                                <option value="true" selected>Active</option>
+                                <option value="false">InActive</option>
+                            }
+                            else
+                            {
+                                <option value="true">Active</option>
+                                <option value="false" selected>InActive</option>
+
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById("preview");
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result; // الصورة الجديدة
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+<script>
+    const conateiner = document.getElementById('colorContainer');
+    const addBtn = document.getElementById('addButtonColor');
+
+    addBtn.addEventListener('click', () => {
+        var colorRow = document.createElement('div');
+
+        colorRow.className = 'mb-2 d-flex align-item-center'
+        colorRow.innerHTML = `
+            <input type="color" class="form-control form-control-color" name="Colors">
+            <button type="Button" class="btn btn-danger btn-sm removeColor">X</button>
+        `;
+
+        conateiner.appendChild(colorRow);
+    });
+
+    conateiner.addEventListener('click', (e) => {
+        if(e.target.classList.contains('removeColor')) {
+            e.target.parentElement.remove();
+        }
+    })
+</script>

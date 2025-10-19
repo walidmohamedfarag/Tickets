@@ -6,6 +6,5 @@
         public Movie Movie { get; set; } = null!;
         public int ActorId { get; set; }
         public Actor Actor { get; set; } = null!;
-        public string Img { get; set; } = string.Empty;
     }
 }
