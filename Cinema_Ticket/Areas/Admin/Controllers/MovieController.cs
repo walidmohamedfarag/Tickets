@@ -128,7 +128,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
 
             #region Delete Movie With Main And Sub Images
             var movie = _db.Movies.FirstOrDefault(c => c.Id == id);
-            if (movie is not null)
+            if (movie is null)
                 return View("ErrorPage", "Home");
             // Delete Main Image 
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", movie.MainImg);
