@@ -67,7 +67,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         public IActionResult Delete(int id)
         {
             var cinema = DB.Cinemas.FirstOrDefault(c=>c.Id == id);
-            if (cinema is not null)
+            if (cinema is null)
                 return View("ErrorPage", "Home");
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
             if (Path.Exists(oldPath))
