@@ -1,24 +1,34 @@
-﻿using Cinema_Ticket.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿
+using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Areas.Admin.Controllers
 {
     public class ActorController : Controller
     {
-        private readonly ApplicationDB context = new();
-        public IActionResult ShowAll()
+        private readonly IRepositroy<Actor> actorRepo;
+        private readonly IRepositroy<MovieActor> movieActorRepo;
+        private readonly IRepositroy<Movie> movieRepo;
+
+        public ActorController(IRepositroy<Actor> _actorRepo , IRepositroy<MovieActor> _movieActorRepo , IRepositroy<Movie> _movieRepo)
         {
-            var actors = context.MovieActors.Include(m=>m.Actor).Include(m=>m.Movie);
+            actorRepo = _actorRepo;
+            movieActorRepo = _movieActorRepo;
+            movieRepo = _movieRepo;
+        }
+
+        public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
+        {
+            var actors =await movieActorRepo.GetAsync(includes: [ma => ma.Movie, ma => ma.Actor], cancellationToken: cancellationToken);
             return View(actors);
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            var movies = context.Movies;
+            var movies =await movieRepo.GetAsync(cancellationToken : cancellationToken);
             return View(movies);
         }
         [HttpPost]
-        public IActionResult Create(Actor actor, IFormFile img ,int movieId)
+        public async Task<IActionResult> Create(Actor actor, IFormFile img ,int movieId , CancellationToken cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -30,26 +40,26 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 }
                 actor.Img = imgName;
             }
-            context.Actors.Add(actor);
-            context.SaveChanges();
-            context.MovieActors.Add(new MovieActor { MovieId = movieId, ActorId = actor.Id });
-            context.SaveChanges();
+            await actorRepo.AddAsync(actor , cancellationToken: cancellationToken);
+            await actorRepo.CommitAsync( cancellationToken);
+            await movieActorRepo.AddAsync(new MovieActor { MovieId = movieId, ActorId = actor.Id } , cancellationToken: cancellationToken);
+            await movieActorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
         {
-            var actor = context.Actors.FirstOrDefault(a => a.Id == id);
+            var actor =await actorRepo.GetOneAsync(a => a.Id == id , cancellationToken: cancellationToken);
             if (actor is null)
                 return View("ErrorPage", "Home");
-            ViewBag.MovieActotId = context.MovieActors.FirstOrDefault(ma => ma.ActorId == id);
-            ViewBag.AllMovie = context.Movies;
+            ViewBag.MovieActotId =await movieActorRepo.GetOneAsync(ma => ma.ActorId == id , cancellationToken: cancellationToken);
+            ViewBag.AllMovie =await movieRepo.GetAsync(cancellationToken:cancellationToken);
             return View(actor);
         }
         [HttpPost]
-        public IActionResult Edit(Actor actor , IFormFile img, int? movieId , int oMovieId)
+        public async Task<IActionResult> Edit(Actor actor , IFormFile img, int? movieId , int oMovieId , CancellationToken cancellationToken)
         {
-            var oldActor = context.Actors.AsNoTracking().FirstOrDefault(a=>a.Id == actor.Id);
+            var oldActor = await actorRepo.GetOneAsync(a=>a.Id == actor.Id , tracked:false , cancellationToken : cancellationToken);
             if (img is not null && img.Length > 0)
             {
                 var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldActor.Img);
@@ -65,25 +75,25 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             }
             else
                 actor.Img = oldActor.Img;
-            context.Update(actor);
-            context.SaveChanges();
+            actorRepo.Update(actor);
+            await actorRepo.CommitAsync(cancellationToken);
             if (movieId is null)
                 return View("ErrorPage", "Home");
-            var newMovie = context.Movies.FirstOrDefault(m => m.Id == movieId);
-            context.MovieActors.Remove(new MovieActor { ActorId = actor.Id, MovieId = oMovieId });
-            context.SaveChanges();
-            context.MovieActors.Add(new MovieActor { ActorId = actor.Id, MovieId = newMovie.Id });
-            context.SaveChanges();
+            var newMovie =await movieRepo.GetOneAsync(m => m.Id == movieId , cancellationToken: cancellationToken);
+            movieActorRepo.Delete(new MovieActor { ActorId = actor.Id, MovieId = oMovieId });
+            await movieActorRepo.CommitAsync(cancellationToken);
+            await movieActorRepo.AddAsync(new MovieActor { ActorId = actor.Id, MovieId = newMovie.Id } , cancellationToken: cancellationToken);
+            await movieActorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
         {
-            var oldImg = context.Actors.FirstOrDefault(a => a.Id == id);
+            var oldImg =await actorRepo.GetOneAsync(a => a.Id == id , cancellationToken: cancellationToken);
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldImg.Img);
             if (Path.Exists(oldPath))
                 System.IO.File.Delete(oldPath);
-            context.Remove(oldImg);
-            context.SaveChanges();
+            actorRepo.Delete(oldImg);
+            await actorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
     }

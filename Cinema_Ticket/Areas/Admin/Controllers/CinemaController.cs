@@ -1,12 +1,20 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace Cinema_Ticket.Areas.Admin.Controllers
 {
     public class CinemaController : Controller
     {
-        private readonly ApplicationDB DB = new();
-        public IActionResult ShowAll()
+        private readonly IRepositroy<Cinema> cinemaRepo;
+
+        public CinemaController(IRepositroy<Cinema> _cinemaRepo)
         {
-            var cinemas = DB.Cinemas;
+            cinemaRepo = _cinemaRepo;
+        }
+
+        public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
+        {
+            var cinemas =await cinemaRepo.GetAsync(cancellationToken: cancellationToken);
             return View(cinemas);
         }
         [HttpGet]
@@ -15,7 +23,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Cinema cinema, IFormFile img)
+        public async Task<IActionResult> Create(Cinema cinema, IFormFile img , CancellationToken cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -29,22 +37,22 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             }
             if (ModelState.IsValid)
             {
-                DB.Cinemas.Add(cinema);
-                DB.SaveChanges();
+                await cinemaRepo.AddAsync(cinema , cancellationToken : cancellationToken);
+                await cinemaRepo.CommitAsync(cancellationToken);
                 return RedirectToAction(nameof(ShowAll));
             }
             return View();
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
         {
-            var cinema = DB.Cinemas.FirstOrDefault(c=>c.Id == id);
+            var cinema =await cinemaRepo.GetOneAsync(c=>c.Id == id , cancellationToken: cancellationToken);
             return View(cinema);
         }
         [HttpPost]
-        public IActionResult Edit(Cinema cinema , IFormFile img)
+        public async Task<IActionResult> Edit(Cinema cinema , IFormFile img , CancellationToken cancellationToken)
         {
-            var oldCinema = DB.Cinemas.AsNoTracking().FirstOrDefault(c=>c.Id ==cinema.Id);
+            var oldCinema =await cinemaRepo.GetOneAsync(c=>c.Id ==cinema.Id , tracked:false , cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
             {
                 var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", oldCinema.Img);
@@ -60,20 +68,20 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             }
             else
                 cinema.Img = oldCinema.Img;
-            DB.Update(cinema);
-            DB.SaveChanges();
+            cinemaRepo.Update(cinema);
+            await cinemaRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
         {
-            var cinema = DB.Cinemas.FirstOrDefault(c=>c.Id == id);
+            var cinema =await cinemaRepo.GetOneAsync(c=>c.Id == id , cancellationToken: cancellationToken);
             if (cinema is null)
                 return View("ErrorPage", "Home");
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
             if (Path.Exists(oldPath))
                 System.IO.File.Delete(oldPath);
-            DB.Remove(cinema);
-            DB.SaveChanges();
+            cinemaRepo.Delete(cinema);
+            await cinemaRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
 
         }

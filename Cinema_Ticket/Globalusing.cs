@@ -5,3 +5,5 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Cinema_Ticket.DataAccess;
 global using Microsoft.AspNetCore.Mvc;
 global using Cinema_Ticket;
+global using Cinema_Ticket.Repositries;
+

@@ -1,3 +1,4 @@
+
 namespace Cinema_Ticket
 {
     public class Program
@@ -8,6 +9,8 @@ namespace Cinema_Ticket
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            builder.Services.RegisterConfig(connectionString);
 
             var app = builder.Build();
 

@@ -1,24 +1,36 @@
 ﻿
 using Microsoft.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Movie_Ticket.Areas.Admin.Controllers
 {
     public class MovieController : Controller
     {
-        private readonly ApplicationDB _db = new();
-        public IActionResult ShowAll()
+        private readonly IRepositroy<Movie> movieRepo;
+        private readonly IRepositroy<Cinema> cinemaRepo;
+        private readonly IRepositroy<MovieSubImg> movieSubImgRepo;
+
+
+        public MovieController(IRepositroy<Movie> _movieRepo, IRepositroy<Cinema> _cinemaRepo , IRepositroy<MovieSubImg> _movieSubImgRepo)
         {
-            var movies = _db.Movies.Include(mv=>mv.Cinema);
+            movieRepo = _movieRepo;
+            cinemaRepo = _cinemaRepo;
+            movieSubImgRepo = _movieSubImgRepo;
+        }
+
+        public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
+        {
+            var movies =await movieRepo.GetAsync(includes: [m => m.Cinema], cancellationToken: cancellationToken);
             return View(movies);
         }
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            var cinemas = _db.Cinemas;
+            var cinemas =await cinemaRepo.GetAsync(cancellationToken:cancellationToken);
             return View(cinemas);
         }
         [HttpPost]
-        public IActionResult Create(Movie movie , IFormFile MainImg , IEnumerable<IFormFile> subImgs)
+        public async Task<IActionResult> Create(Movie movie , IFormFile MainImg , IEnumerable<IFormFile> subImgs , CancellationToken cancellationToken)
         {
             #region Add Main Image And Movie
             if (MainImg is not null && MainImg.Length > 0)
@@ -31,8 +43,8 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                 }
                 movie.MainImg = mainimgName;
             }
-            _db.Movies.Add(movie);
-            _db.SaveChanges();
+            await movieRepo.AddAsync(movie, cancellationToken:cancellationToken);
+            await movieRepo.CommitAsync(cancellationToken);
             #endregion
 
             #region Add Sub Images
@@ -46,9 +58,9 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                     {
                         subimg.CopyTo(stream);
                     }
-                    _db.MovieSubImgs.Add(new MovieSubImg { Img = subimgName, MovieId = movie.Id });
+                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = subimgName, MovieId = movie.Id } , cancellationToken:cancellationToken);
                 }
-                _db.SaveChanges();
+                await movieSubImgRepo.CommitAsync(cancellationToken);
             }
             #endregion
 
@@ -56,18 +68,18 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
         {
-            var movie = _db.Movies.FirstOrDefault(c => c.Id == id);
-            var movieImgs = _db.MovieSubImgs.Where(mv=>mv.MovieId == id);
-            var cinemas = _db.Cinemas;
+            var movie =await movieRepo.GetOneAsync(c => c.Id == id,cancellationToken:cancellationToken);
+            var movieImgs =await movieSubImgRepo.GetAsync(mv=>mv.MovieId == id , cancellationToken:cancellationToken);
+            var cinemas =await cinemaRepo.GetAsync();
             return View(new ModelVM { Movie = movie , subImgs = movieImgs , Cinemas = cinemas});
         }
         [HttpPost]
-        public IActionResult Edit(Movie movie, IFormFile mainimg , IEnumerable<IFormFile> subImgs)
+        public async Task<IActionResult> Edit(Movie movie, IFormFile mainimg , IEnumerable<IFormFile> subImgs , CancellationToken cancellationToken)
         {
             // Get Old Movie To Update
-            var oldMovie = _db.Movies.AsNoTracking().FirstOrDefault(c => c.Id == movie.Id);
+            var oldMovie =await movieRepo.GetOneAsync(c => c.Id == movie.Id  ,tracked:false);
 
             #region Edit Main Image
             if (mainimg is not null && mainimg.Length > 0)
@@ -85,15 +97,15 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             }
             else
                 movie.MainImg = oldMovie.MainImg;
-            _db.Update(movie);
-            _db.SaveChanges();
+            movieRepo.Update(movie);
+            await movieRepo.CommitAsync(cancellationToken);
             #endregion
 
             #region Edit Sub Image
             if (subImgs is not null && subImgs.Any())
             {
                 //Get Old Image To Delete 
-                var oldSubImgs = _db.MovieSubImgs.AsNoTracking().Where(mv => mv.MovieId == movie.Id);
+                var oldSubImgs =await movieSubImgRepo.GetAsync(mv => mv.MovieId == movie.Id , tracked:false , cancellationToken : cancellationToken);
                 if(!oldSubImgs.Any())
                     return View("ErrorPage", "Home");
                 // Loop To Delete Old Sub Image
@@ -102,9 +114,9 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                     var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", oimg.Img);
                     if (Path.Exists(oldPath))
                         System.IO.File.Delete(oldPath);
-                    _db.MovieSubImgs.Remove(oimg);
+                    movieSubImgRepo.Delete(oimg);
                 }
-                _db.SaveChanges();
+                await movieSubImgRepo.CommitAsync(cancellationToken);
                 // Add New Sub Image
                 foreach (var subimg in subImgs)
                 {
@@ -114,54 +126,54 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                     {
                         subimg.CopyTo(stream);
                     }
-                    _db.MovieSubImgs.Add(new MovieSubImg { Img = subimgName, MovieId = movie.Id });
+                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = subimgName, MovieId = movie.Id } , cancellationToken:cancellationToken);
                 }
-                _db.SaveChanges();
+                await movieSubImgRepo.CommitAsync(cancellationToken);
 
             }
             #endregion
 
             return RedirectToAction(nameof(ShowAll));
         }
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
         {
 
             #region Delete Movie With Main And Sub Images
-            var movie = _db.Movies.FirstOrDefault(c => c.Id == id);
+            var movie =await movieRepo.GetOneAsync(c => c.Id == id , cancellationToken: cancellationToken);
             if (movie is null)
                 return View("ErrorPage", "Home");
             // Delete Main Image 
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", movie.MainImg);
             if (Path.Exists(oldPath))
                 System.IO.File.Delete(oldPath);
-            _db.Remove(movie);
-            _db.SaveChanges();
+            movieRepo.Delete(movie);
+            await movieRepo.CommitAsync(cancellationToken);
             // Delete Sub Images 
-            var movieSubImges = _db.MovieSubImgs.Where(m=>m.MovieId == id);
+            var movieSubImges =await movieSubImgRepo.GetAsync(m=>m.MovieId == id , cancellationToken:cancellationToken);
             foreach (var oimg in movieSubImges)
             {
                 var oldSubImgs = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", oimg.Img);
                 if (Path.Exists(oldSubImgs))
                     System.IO.File.Delete(oldSubImgs);
-                _db.MovieSubImgs.Remove(oimg);
+                movieSubImgRepo.Delete(oimg);
             }
-            _db.SaveChanges();
+            await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
             return RedirectToAction(nameof(ShowAll));
 
         }
-        public IActionResult DeleteSubImg(int id , string img)
+        public async Task<IActionResult> DeleteSubImg(int id , string img , CancellationToken cancellationToken)
         {
             #region Delete Specifiy Sub Image
-            var movieSubImg = _db.MovieSubImgs.FirstOrDefault(c => c.MovieId == id && c.Img == img);
+            var movieSubImg =await movieSubImgRepo.GetOneAsync(c => c.MovieId == id && c.Img == img , cancellationToken:cancellationToken);
             if (movieSubImg is null)
                 return View("ErrorPage", "Home");
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", movieSubImg.Img);
             if (Path.Exists(oldPath))
                 System.IO.File.Delete(oldPath);
-            _db.MovieSubImgs.Remove(movieSubImg);
-            _db.SaveChanges();
+            movieSubImgRepo.Delete(movieSubImg);
+            await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
             return RedirectToAction(nameof(Edit), new { id = id });
