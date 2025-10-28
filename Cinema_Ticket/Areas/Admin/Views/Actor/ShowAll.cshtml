@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MovieActor>
+﻿@model IEnumerable<Actor>
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
@@ -18,8 +18,6 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Image</th>
-                        <th scope="col">Movie</th>
-                        <th scope="col">Movie Type</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -27,16 +25,14 @@
                     @foreach (var item in Model)
                     {
                         <tr>
-                            <th scope="row">@item.Actor.Id</th>
-                            <td class="name-cell">@item.Actor.FullName</td>
+                            <th scope="row">@item.Id</th>
+                            <td class="name-cell"><a asp-action="ActorDetails" asp-controller="Actor" asp-route-id="@item.Id">@item.FullName</a></td>
                             <td>
-                                <img src="~/ActorImage/@item.Actor.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
+                                <img src="~/ActorImage/@item.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
                             </td>
-                            <td class="name-cell">@item.Movie.Name</td>
-                            <td class="name-cell">@item.Movie.Type</td>
                             <td>
-                                <a href="/Admin/Actor/Edit?id=@item.Actor.Id&oMovieId=@item.Movie.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/Admin/Actor/Delete?id=@item.Actor.Id" class="btn btn-danger btn-delete">Delete</a>
+                                <a href="/Admin/Actor/Edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
+                                <a href="/Admin/Actor/Delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
 
                             </td>
                         </tr>

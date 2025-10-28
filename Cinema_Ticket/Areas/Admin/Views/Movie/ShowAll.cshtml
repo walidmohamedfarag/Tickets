@@ -41,7 +41,7 @@
                             <td>
                                 <img src="~/MovieImg/@item.MainImg" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
                             </td>
-                            @if (item.Status)
+                            @if (item.Date_Time.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
                             {
                                 <td><span class="badge text-bg-success">Active</span></td>
                             }

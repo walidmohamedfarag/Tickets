@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string FullName { get; set; } = null!;
-        public string Img { get; set; } = string.Empty;
+        public string? Img { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿
-using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Areas.Admin.Controllers
 {
@@ -9,7 +8,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         private readonly IRepositroy<MovieActor> movieActorRepo;
         private readonly IRepositroy<Movie> movieRepo;
 
-        public ActorController(IRepositroy<Actor> _actorRepo , IRepositroy<MovieActor> _movieActorRepo , IRepositroy<Movie> _movieRepo)
+        public ActorController(IRepositroy<Actor> _actorRepo, IRepositroy<MovieActor> _movieActorRepo, IRepositroy<Movie> _movieRepo)
         {
             actorRepo = _actorRepo;
             movieActorRepo = _movieActorRepo;
@@ -18,17 +17,17 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
 
         public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
         {
-            var actors =await movieActorRepo.GetAsync(includes: [ma => ma.Movie, ma => ma.Actor], cancellationToken: cancellationToken);
+            var actors = await actorRepo.GetAsync(cancellationToken: cancellationToken);
             return View(actors);
         }
         [HttpGet]
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
-            var movies =await movieRepo.GetAsync(cancellationToken : cancellationToken);
-            return View(movies);
+            var actors = await actorRepo.GetAsync(cancellationToken: cancellationToken);
+            return View(actors);
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Actor actor, IFormFile img ,int movieId , CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(Actor actor, IFormFile img, CancellationToken cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -40,31 +39,33 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 }
                 actor.Img = imgName;
             }
-            await actorRepo.AddAsync(actor , cancellationToken: cancellationToken);
-            await actorRepo.CommitAsync( cancellationToken);
-            await movieActorRepo.AddAsync(new MovieActor { MovieId = movieId, ActorId = actor.Id } , cancellationToken: cancellationToken);
-            await movieActorRepo.CommitAsync(cancellationToken);
+            await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);
+            await actorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
-        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var actor =await actorRepo.GetOneAsync(a => a.Id == id , cancellationToken: cancellationToken);
+            var actor = await actorRepo.GetOneAsync(a => a.Id == id, cancellationToken: cancellationToken);
             if (actor is null)
                 return View("ErrorPage", "Home");
-            ViewBag.MovieActotId =await movieActorRepo.GetOneAsync(ma => ma.ActorId == id , cancellationToken: cancellationToken);
-            ViewBag.AllMovie =await movieRepo.GetAsync(cancellationToken:cancellationToken);
+            ViewBag.MovieActotId = await movieActorRepo.GetOneAsync(ma => ma.ActorId == id, cancellationToken: cancellationToken);
+            ViewBag.AllMovie = await movieRepo.GetAsync(cancellationToken: cancellationToken);
             return View(actor);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Actor actor , IFormFile img, int? movieId , int oMovieId , CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(Actor actor, IFormFile img, CancellationToken cancellationToken)
         {
-            var oldActor = await actorRepo.GetOneAsync(a=>a.Id == actor.Id , tracked:false , cancellationToken : cancellationToken);
+            var oldActor = await actorRepo.GetOneAsync(a => a.Id == actor.Id, tracked: false, cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
             {
-                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldActor.Img);
-                if (Path.Exists(oldPath))
-                    System.IO.File.Delete(oldPath);
+                if (oldActor.Img is not null)
+                {
+                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldActor.Img);
+                    if (Path.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
+
                 var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
                 var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", imgName);
                 using (var stream = System.IO.File.Create(imgPath))
@@ -77,24 +78,36 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 actor.Img = oldActor.Img;
             actorRepo.Update(actor);
             await actorRepo.CommitAsync(cancellationToken);
-            if (movieId is null)
-                return View("ErrorPage", "Home");
-            var newMovie =await movieRepo.GetOneAsync(m => m.Id == movieId , cancellationToken: cancellationToken);
-            movieActorRepo.Delete(new MovieActor { ActorId = actor.Id, MovieId = oMovieId });
-            await movieActorRepo.CommitAsync(cancellationToken);
-            await movieActorRepo.AddAsync(new MovieActor { ActorId = actor.Id, MovieId = newMovie.Id } , cancellationToken: cancellationToken);
-            await movieActorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
         }
-        public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var oldImg =await actorRepo.GetOneAsync(a => a.Id == id , cancellationToken: cancellationToken);
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldImg.Img);
-            if (Path.Exists(oldPath))
-                System.IO.File.Delete(oldPath);
+            var oldImg = await actorRepo.GetOneAsync(a => a.Id == id, cancellationToken: cancellationToken);
+            if (oldImg!.Img is not null)
+            {
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldImg.Img);
+                if (Path.Exists(oldPath))
+                    System.IO.File.Delete(oldPath);
+            }
             actorRepo.Delete(oldImg);
             await actorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
+        }
+        public async Task<IActionResult> ActorDetails(int id, CancellationToken cancellationToken)
+        {
+            var _actor = await movieActorRepo.GetAsync(a => a.ActorId == id, tracked: false, cancellationToken: cancellationToken);
+            var actor = await actorRepo.GetOneAsync(a => a.Id == id, cancellationToken: cancellationToken);
+            List<Movie> movies = new List<Movie>();
+            foreach (var item in _actor)
+            {
+                var movie = await movieRepo.GetOneAsync(m => m.Id == item.MovieId, includes: [m => m.Cinema], cancellationToken: cancellationToken);
+                movies.Add(movie);
+            }
+            return View(new ActorVM
+            {
+                Actor = actor,
+                Movies = movies,
+            });
         }
     }
 }

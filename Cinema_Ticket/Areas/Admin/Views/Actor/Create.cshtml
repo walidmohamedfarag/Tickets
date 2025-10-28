@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Movie>
+﻿@model IEnumerable<Actor>
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
@@ -18,7 +18,7 @@
                     <label for="image" class="form-label">Image</label>
                     <input class="form-control" type="file" name="img">
                 </div>
-                <div class="mb-3">
+@*                 <div class="mb-3">
                     <label for="movie" class="form-label">Movie</label>
                     <select name="movieId" class="form-select" placeholder="Select Movie">
                         @foreach (var movie in Model)
@@ -27,7 +27,7 @@
                         }
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+ *@                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>

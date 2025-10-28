@@ -1,0 +1,65 @@
+﻿@model ActorVM
+<body>
+
+    <h1>Actor: @Model.Actor.FullName</h1>
+    <img src="~/ActorImage/@Model.Actor.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
+</body>
+
+
+<div class="row">
+    <div class="col-12">
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Movie</th>
+                    <th scope="col">Cinema</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Movie Status</th>
+                    <th scope="col">Movie Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Movies)
+                {
+
+                    <tr>
+                        <th scope="row">@Model.Actor.Id</th>
+                        <td class="name-cell">@item.Name</td>
+                        <td class="name-cell">@item.Cinema.Name</td>
+                        <td class="name-cell">@item.Date_Time.ToString("yyyy-MM-dd")</td>
+                        @if (item.Date_Time.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
+                        {
+                            <td><span class="badge text-bg-success">Active</span></td>
+                        }
+                        else
+                        {
+                            <td><span class="badge text-bg-danger">InActive</span></td>
+                        }
+                        <td class="name-cell">@item.Type</td>
+                    </tr>
+                }
+
+                <!-- نافذة العرض -->
+                <div id="imgModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); text-align:center;">
+                    <img id="modalImg" style="margin-top:5%; max-width:80%; max-height:80%; border-radius:8px;">
+                </div>
+
+                <script>
+                    function openImageModal(img) {
+                        var modal = document.getElementById("imgModal");
+                        var modalImg = document.getElementById("modalImg");
+                        modalImg.src = img.src;
+                        modal.style.display = "block";
+                        modal.onclick = function () {
+                            modal.style.display = "none";
+                        }
+                    }
+                </script>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
