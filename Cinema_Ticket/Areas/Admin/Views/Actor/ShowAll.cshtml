@@ -61,3 +61,44 @@
         </div>
     </div>
 </div>
+
+
+@section Scripts {
+    <partial name="_NotificationPartial">
+}
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-delete");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault(); // stop normal navigation
+
+                const url = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action cannot be undone!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                          title: "Deleted!",
+                          text: "Your file has been deleted.",
+                          icon: "success"
+                        });
+
+                        // Redirect to delete URL
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    });
+
+</script>

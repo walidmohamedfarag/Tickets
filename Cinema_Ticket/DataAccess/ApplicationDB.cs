@@ -14,6 +14,7 @@ namespace Cinema_Ticket.DataAccess
         public DbSet<MovieActor> MovieActors { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieSubImg> MovieSubImgs { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

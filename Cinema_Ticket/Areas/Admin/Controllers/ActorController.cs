@@ -44,6 +44,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             actor.BirthDate = birthDate;
             await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);
             await actorRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Actor created successfully.";
             return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
@@ -83,6 +84,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             actor.BirthDate = birthDate;
             actorRepo.Update(actor);
             await actorRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Actor Edited Successfully.";
             return RedirectToAction(nameof(ShowAll));
         }
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
@@ -96,6 +98,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             }
             actorRepo.Delete(oldImg);
             await actorRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Actor Deleted Successfully.";
             return RedirectToAction(nameof(ShowAll));
         }
         public async Task<IActionResult> ActorDetails(int id, CancellationToken cancellationToken)

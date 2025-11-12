@@ -76,7 +76,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             }
             #endregion
 
-
+            TempData["success-notification"] = "Movie Created Successfully";
             return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
@@ -149,6 +149,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             }
             #endregion
 
+            TempData["success-notification"] = "Movie Edited Successfully";
             return RedirectToAction(nameof(ShowAll));
         }
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
@@ -176,6 +177,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
+            TempData["success-notification"] = "Movie Deleted Successfully";
             return RedirectToAction(nameof(ShowAll));
 
         }
@@ -192,6 +194,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
+            TempData["success-notification"] = "Sub Image Deleted Successfully"; 
             return RedirectToAction(nameof(Edit), new { id = id });
 
         }

@@ -40,6 +40,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             {
                 await cinemaRepo.AddAsync(cinema , cancellationToken : cancellationToken);
                 await cinemaRepo.CommitAsync(cancellationToken);
+                TempData["success-notification"] = "Cinema Created Successfully";
                 return RedirectToAction(nameof(ShowAll));
             }
             return View();
@@ -71,6 +72,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 cinema.Img = oldCinema.Img;
             cinemaRepo.Update(cinema);
             await cinemaRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Cinema Edited Successfully";
             return RedirectToAction(nameof(ShowAll));
         }
         public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
@@ -83,6 +85,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 System.IO.File.Delete(oldPath);
             cinemaRepo.Delete(cinema);
             await cinemaRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Cinema Deleted Successfully";
             return RedirectToAction(nameof(ShowAll));
 
         }
