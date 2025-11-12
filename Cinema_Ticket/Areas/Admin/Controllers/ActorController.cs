@@ -28,7 +28,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             return View(actors);
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Actor actor, IFormFile img, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(Actor actor, ActorBirthDateVM actorBirthDateVM, IFormFile img, CancellationToken cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -40,6 +40,8 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 }
                 actor.Img = imgName;
             }
+            var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
+            actor.BirthDate = birthDate;
             await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);
             await actorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));
@@ -55,7 +57,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             return View(actor);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Actor actor, IFormFile img, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(Actor actor, IFormFile img , ActorBirthDateVM actorBirthDateVM, CancellationToken cancellationToken)
         {
             var oldActor = await actorRepo.GetOneAsync(a => a.Id == actor.Id, tracked: false, cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
@@ -77,6 +79,8 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             }
             else
                 actor.Img = oldActor.Img;
+            var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
+            actor.BirthDate = birthDate;
             actorRepo.Update(actor);
             await actorRepo.CommitAsync(cancellationToken);
             return RedirectToAction(nameof(ShowAll));

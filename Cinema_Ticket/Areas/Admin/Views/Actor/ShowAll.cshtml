@@ -13,10 +13,11 @@
         <div class="col-12">
 
             <table class="table table-hover">
-                <thead>
+                <thead class="table-dark">
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Age</th>
                         <th scope="col">Image</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -27,6 +28,7 @@
                         <tr>
                             <th scope="row">@item.Id</th>
                             <td class="name-cell"><a asp-action="ActorDetails" asp-controller="Actor" asp-route-id="@item.Id">@item.FullName</a></td>
+                            <th scope="row">@(DateTime.Now.Year - item.BirthDate.Year )</th>
                             <td>
                                 <img src="~/ActorImage/@item.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
                             </td>

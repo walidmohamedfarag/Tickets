@@ -15,20 +15,67 @@
                     <input class="form-control" name="FullName">
                 </div>
                 <div class="mb-3">
+                    <label for="BirthDate" class="form-label">Birth Date</label>
+                    <div class="d-flex gap-2">
+                        <select id="year" name="Year" class="form-select" style="width: 33%;"></select>
+                        <select id="month" name="Month" class="form-select" style="width: 33%;"></select>
+                        <select id="day" name="Day" class="form-select" style="width: 33%;"></select>
+                    </div>
+                </div>
+                <div class="mb-3">
                     <label for="image" class="form-label">Image</label>
                     <input class="form-control" type="file" name="img">
                 </div>
-@*                 <div class="mb-3">
-                    <label for="movie" class="form-label">Movie</label>
-                    <select name="movieId" class="form-select" placeholder="Select Movie">
-                        @foreach (var movie in Model)
-                        {
-                            <option value="@movie.Id">@movie.Name</option>
-                        }
-                    </select>
-                </div>
- *@                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    const yearSelect = document.getElementById("year");
+    const monthSelect = document.getElementById("month");
+    const daySelect = document.getElementById("day");
+
+    // 🗓️ تعبئة السنوات (من 1950 إلى السنة الحالية)
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 1950; y--) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+
+    // 🗓️ تعبئة الشهور
+    const months = [
+      "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
+      "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+    ];
+    months.forEach((m, i) => {
+      const option = document.createElement("option");
+      option.value = i + 1;
+      option.textContent = m;
+      monthSelect.appendChild(option);
+    });
+
+    // 🗓️ تحديث الأيام حسب الشهر والسنة المختارة
+    function updateDays() {
+      daySelect.innerHTML = "";
+      const year = yearSelect.value;
+      const month = monthSelect.value;
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const option = document.createElement("option");
+        option.value = d;
+        option.textContent = d;
+        daySelect.appendChild(option);
+      }
+    }
+
+    yearSelect.addEventListener("change", updateDays);
+    monthSelect.addEventListener("change", updateDays);
+
+    // تعبئة أول مرة
+    updateDays();
+</script>
