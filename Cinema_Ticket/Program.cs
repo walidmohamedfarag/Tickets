@@ -1,4 +1,6 @@
 
+using Cinema_Ticket.MapestrConfigration;
+
 namespace Cinema_Ticket
 {
     public class Program
@@ -12,8 +14,8 @@ namespace Cinema_Ticket
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.RegisterConfig(connectionString);
 
+            builder.Services.RegisterMaps();
             var app = builder.Build();
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
