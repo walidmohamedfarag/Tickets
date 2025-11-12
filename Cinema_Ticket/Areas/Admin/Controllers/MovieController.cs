@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Movie_Ticket.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class MovieController : Controller
     {
         private readonly IRepositroy<Movie> movieRepo;

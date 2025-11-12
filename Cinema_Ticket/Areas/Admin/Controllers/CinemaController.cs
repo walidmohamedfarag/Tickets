@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CinemaController : Controller
     {
         private readonly IRepositroy<Cinema> cinemaRepo;

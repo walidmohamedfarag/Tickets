@@ -93,7 +93,7 @@
                 </div>
                 <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
                     <div class="navbar-vertical-content scrollbar">
-                        <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
+                        <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav"> 
                             <li class="nav-item">
                                 <!-- parent pages--><a class="nav-link dropdown-indicator" href="#dashboard" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="dashboard">
                                     <div class="d-flex align-items-center">
@@ -104,7 +104,7 @@
                                     <li class="nav-item">
                                         <!-- Add cinema page-->
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Cinema/ShowAll") ? "active text-primary" : "text-dark")"
-                                           asp-area="Admin" asp-controller="Cinema" asp-action="ShowAll">
+                                           href="/Admin/Cinema/ShowAll">
                                             <div class="d-flex align-items-center">
                                                 <span class="nav-link-text ps-1">Cinemas</span>
                                             </div>
@@ -113,7 +113,7 @@
                                     <li class="nav-item">
                                         <!-- Add Movie page-->
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Movie/ShowAll") ? "active text-primary" : "text-dark")"
-                                           asp-area="Admin" asp-controller="Movie" asp-action="ShowAll">
+                                           href="/Admin/Movie/ShowAll">
                                             <div class="d-flex align-items-center">
                                                 <span class="nav-link-text ps-1">Movies</span>
                                             </div>
@@ -122,7 +122,7 @@
                                     <li class="nav-item">
                                         <!-- Add Actor page-->
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Actor/ShowAll") ? "active text-primary" : "text-dark")"
-                                           asp-area="Admin" asp-controller="Actor" asp-action="ShowAll">
+                                           href="/Admin/Actor/ShowAll">
                                             <div class="d-flex align-items-center">
                                                 <span class="nav-link-text ps-1">Actors</span>
                                             </div>
@@ -516,6 +516,10 @@
                                                 <hr class="mb-0 navbar-vertical-divider" />
                                             </div>
                                         </div>
+                                        <!-- parent pages--><a class="nav-link" href="/Customer/Home/Index" role="button">
+                                            <div class="d-flex align-items-center">
+                                                <span class="nav-link-icon"><span class="fas fa-flag"></span></span><span class="nav-link-text ps-1">Customer</span>
+                                            </div>
                                         <!-- parent pages--><a class="nav-link" href="~/pages/starter.html" role="button">
                                             <div class="d-flex align-items-center">
                                                 <span class="nav-link-icon"><span class="fas fa-flag"></span></span><span class="nav-link-text ps-1">Starter</span>

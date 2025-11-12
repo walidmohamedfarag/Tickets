@@ -18,6 +18,7 @@
         public DateTime Date_Time { get; set; }
         public bool Status { get; set; }
         public string? MainImg { get; set; } 
+        public string? TrailerUrl { get; set; } 
         public string Type { get; set; } = string.Empty;
         public int CinemaId { get; set; }
         public Cinema? Cinema { get; set; }
