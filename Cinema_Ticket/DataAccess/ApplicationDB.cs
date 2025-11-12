@@ -1,8 +1,9 @@
 ﻿
 
+
 namespace Cinema_Ticket.DataAccess
 {
-    public class ApplicationDB : DbContext
+    public class ApplicationDB : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDB(DbContextOptions<ApplicationDB> options) : base(options)
         {
@@ -13,6 +14,7 @@ namespace Cinema_Ticket.DataAccess
         public DbSet<MovieActor> MovieActors { get; set; }
         public DbSet<Actor> Actors { get; set; }
         public DbSet<MovieSubImg> MovieSubImgs { get; set; }
+
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //    =>optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CinemaTicket;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
