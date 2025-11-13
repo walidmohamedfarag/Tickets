@@ -8,12 +8,14 @@ namespace Cinema_Ticket.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IEmailSender emailSender;
         private readonly SignInManager<ApplicationUser> signManager;
+        private readonly IRepositroy<ApplicationUserOTP> repoOTP;
 
-        public RegisterController(UserManager<ApplicationUser> _userManager, IEmailSender _emailSender , SignInManager<ApplicationUser> _signManager)
+        public RegisterController(UserManager<ApplicationUser> _userManager, IEmailSender _emailSender , SignInManager<ApplicationUser> _signManager , IRepositroy<ApplicationUserOTP> _repoOTP)
         {
             userManager = _userManager;
             emailSender = _emailSender;
             signManager = _signManager;
+            repoOTP = _repoOTP;
         }
 
         public IActionResult Register()
@@ -88,6 +90,82 @@ namespace Cinema_Ticket.Areas.Identity.Controllers
             ViewBag.RememberMe = loginVM.RememberMe;
             TempData["success-notification"] = "Logged in successfully.";
             return RedirectToAction("Index","Home" , new {area = "Customer" });
+        }
+        public IActionResult LogOut()
+        {
+            signManager.SignOutAsync();
+            TempData["success-notification"] = "Logged out successfully.";
+            return RedirectToAction(nameof(LogIn));
+        }
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if(user is null)
+            {
+                TempData["error-notification"] = "No user found with this email.";
+                return View();
+            }
+            var since = DateTime.Now.AddHours(24);
+            var otpsCount = await repoOTP.GetAsync(o => o.UserId == user.Id && o.CreatedAt < since);
+            if(otpsCount.Count() > 3)
+            {
+                TempData["error-notification"] = "You have reached the maximum number of password reset requests. Please try again after 24 hours.";
+                return View();
+            }
+            var otpCode = new Random().Next(100000, 999999);
+            var userOTP = new ApplicationUserOTP
+            {
+                UserId = user.Id,
+                OTP = otpCode.ToString(),
+            };
+            await repoOTP.AddAsync(userOTP);
+            await repoOTP.CommitAsync();
+            await emailSender.SendEmailAsync(user.Email!, "Cinema-Password Reset OTP", $"<h1> Your OTP for password reset is: {otpCode} </h1>");
+            return RedirectToAction(nameof(OTPVerification) , new { userId = user.Id});
+        }
+        public async Task<IActionResult> OTPVerification(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return View(user);
+        }
+        [HttpPost]
+        public async Task<IActionResult> OTPVerification(string userId, string otp)
+        {
+            var userOtp = await repoOTP.GetOneAsync(o => o.UserId == userId && o.OTP == otp);
+            if(userOtp is null)
+            {
+                TempData["error-notification"] = "Invalid OTP. Please try again.";
+                return View();
+            }
+            TempData["success-notification"] = "OTP verified successfully. You can now reset your password.";
+            return RedirectToAction(nameof(ResetPassword) , new { userId });
+        }
+        public async Task<IActionResult> ResetPassword(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            return View(user);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string userId , ResetPasswordVM reset)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user!);
+            var result = await userManager.ResetPasswordAsync(user!, token, reset.Password);
+            if(!result.Succeeded)
+            {
+                StringBuilder errors = new();
+                foreach (var item in result.Errors)
+                    errors.AppendLine(item.Description);
+                TempData["error-notification"] = errors.ToString();
+                return View();
+            }
+            TempData["success-notification"] = "Password reset successfully. You can now log in with your new password.";
+            return View("BackToLogin");
         }
     }
 }

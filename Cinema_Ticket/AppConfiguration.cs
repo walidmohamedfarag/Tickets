@@ -20,6 +20,7 @@ namespace Cinema_Ticket
             services.AddScoped<IRepositroy<MovieActor>, Repositroy<MovieActor>>();
             services.AddScoped<IRepositroy<Actor>, Repositroy<Actor>>();
             services.AddScoped<IRepositroy<MovieSubImg>, Repositroy<MovieSubImg>>();
+            services.AddScoped<IRepositroy<ApplicationUserOTP>, Repositroy<ApplicationUserOTP>>();
             services.AddDbContext<ApplicationDB>(option =>
             {
                 option.UseSqlServer(connection);
