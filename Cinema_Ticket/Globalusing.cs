@@ -13,7 +13,7 @@ global using System.ComponentModel.DataAnnotations;
 global using Mapster;
 global using Microsoft.AspNetCore.Identity.UI.Services;
 global using System.Text;
-
+global using Cinema_Ticket.Utiltiy.DBInitailizer;
 
 
 

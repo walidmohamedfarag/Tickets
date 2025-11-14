@@ -42,7 +42,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actors");
+                    b.ToTable("Actors", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.ApplicationUser", b =>
@@ -147,7 +147,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ApplicationUserOTPs");
+                    b.ToTable("ApplicationUserOTPs", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.Cart", b =>
@@ -171,7 +171,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.Cinema", b =>
@@ -191,7 +191,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Cinemas");
+                    b.ToTable("Cinemas", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.Movie", b =>
@@ -235,7 +235,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasIndex("CinemaId");
 
-                    b.ToTable("Movies");
+                    b.ToTable("Movies", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.MovieActor", b =>
@@ -250,7 +250,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasIndex("ActorId");
 
-                    b.ToTable("MovieActors");
+                    b.ToTable("MovieActors", (string)null);
                 });
 
             modelBuilder.Entity("Cinema_Ticket.Models.MovieSubImg", b =>
@@ -263,7 +263,7 @@ namespace Cinema_Ticket.Migrations
 
                     b.HasKey("MovieId", "Img");
 
-                    b.ToTable("MovieSubImgs");
+                    b.ToTable("MovieSubImgs", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

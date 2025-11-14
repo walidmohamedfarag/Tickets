@@ -78,6 +78,12 @@ namespace Cinema_Ticket.Areas.Identity.Controllers
                 TempData["error-notification"] = "Invalid Email or Password.";
                 return View();
             }
+            if (!user.EmailConfirmed)
+            {
+                TempData["error-notification"] = "Email Must Confirmed Befor Login.";
+                return View();
+            }
+            
             var checkPass = await signManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, true);
             if(!checkPass.Succeeded)
             {

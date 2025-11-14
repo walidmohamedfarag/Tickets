@@ -1,5 +1,6 @@
 ﻿
 using Cinema_Ticket.Utility;
+using Cinema_Ticket.Utility.DBInitailizer;
 using System.Text.RegularExpressions;
 
 namespace Cinema_Ticket
@@ -21,6 +22,8 @@ namespace Cinema_Ticket
             services.AddScoped<IRepositroy<Actor>, Repositroy<Actor>>();
             services.AddScoped<IRepositroy<MovieSubImg>, Repositroy<MovieSubImg>>();
             services.AddScoped<IRepositroy<ApplicationUserOTP>, Repositroy<ApplicationUserOTP>>();
+            services.AddScoped<IRepositroy<Cart>, Repositroy<Cart>>();
+            services.AddScoped<IDBInitailizer, DBInitailizer>();
             services.AddDbContext<ApplicationDB>(option =>
             {
                 option.UseSqlServer(connection);

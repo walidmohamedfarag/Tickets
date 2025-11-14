@@ -1,5 +1,6 @@
 
 using Cinema_Ticket.MapestrConfigration;
+using Cinema_Ticket.Utility.DBInitailizer;
 
 namespace Cinema_Ticket
 {
@@ -16,6 +17,9 @@ namespace Cinema_Ticket
 
             builder.Services.RegisterMaps();
             var app = builder.Build();
+            var scope = app.Services.CreateScope();
+            var service = scope.ServiceProvider.GetService<IDBInitailizer>();
+            service!.Initialize();
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
