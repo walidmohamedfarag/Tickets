@@ -116,9 +116,8 @@ namespace Cinema_Ticket.Areas.Identity.Controllers
                 TempData["error-notification"] = "No user found with this email.";
                 return View();
             }
-            var since = DateTime.Now.AddHours(24);
-            var otpsCount = await repoOTP.GetAsync(o => o.UserId == user.Id && o.CreatedAt < since);
-            if(otpsCount.Count() > 3)
+            var otpsCount = await repoOTP.GetAsync(o => o.UserId == user.Id && o.CreatedAt.Day == DateTime.Now.Day);
+            if(otpsCount.Count() >= 3)
             {
                 TempData["error-notification"] = "You have reached the maximum number of password reset requests. Please try again after 24 hours.";
                 return View();
