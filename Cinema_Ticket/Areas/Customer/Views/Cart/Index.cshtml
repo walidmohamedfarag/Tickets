@@ -42,7 +42,7 @@
             <div class="col px-0">
                 <div class="row gx-x1 mx-0">
                     <div class="col-md-8 py-2 px-x1 d-none d-md-block text-center">@Model.Count() (items)</div>
-                    <div class="col-12 col-md-4 text-end text-nowrap py-2 px-x1 px-md-3 px-lg-x1">@Model.Sum(s=>s.Movie.Price)</div>
+                    <div class="col-12 col-md-4 text-end text-nowrap py-2 px-x1 px-md-3 px-lg-x1">$@Model.Sum(s=>s.Movie.Price)</div>
                 </div>
             </div>
         </div>
@@ -56,3 +56,6 @@
         </form><a class="btn btn-sm btn-primary" href="../../app/e-commerce/checkout.html">Checkout</a>
     </div>
 </div>
+@section Scripts {
+    <partial name="_NotificationPartial">
+}

@@ -15,6 +15,12 @@ namespace Cinema_Ticket
                 option.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<ApplicationDB>()
             .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(option =>
+            {
+                option.LoginPath = "/Identity/Register/Login";
+                option.AccessDeniedPath = "/Identity/Profile/AccessDenied";
+
+            });
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IRepositroy<Cinema>, Repositroy<Cinema>>();
             services.AddScoped<IRepositroy<Movie>, Repositroy<Movie>>();
@@ -23,6 +29,7 @@ namespace Cinema_Ticket
             services.AddScoped<IRepositroy<MovieSubImg>, Repositroy<MovieSubImg>>();
             services.AddScoped<IRepositroy<ApplicationUserOTP>, Repositroy<ApplicationUserOTP>>();
             services.AddScoped<IRepositroy<Cart>, Repositroy<Cart>>();
+            services.AddScoped<IRepositroy<MovieActor>, Repositroy<MovieActor>>();
             services.AddScoped<IDBInitailizer, DBInitailizer>();
             services.AddDbContext<ApplicationDB>(option =>
             {

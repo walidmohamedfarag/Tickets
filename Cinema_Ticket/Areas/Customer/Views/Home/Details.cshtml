@@ -1,0 +1,228 @@
+﻿@model MovieDetailVM
+
+
+<div class="card overflow-hidden mb-3" data-bs-theme="light">
+    <div class="card-body bg-black">
+        <div class="bg-holder rounded-3" style="background-image:url(../../../assets/img/icons/spot-illustrations/course-details-bg.png);">
+        </div>
+        <!--/.bg-holder-->
+
+        <div class="row">
+            <div class="col-xl-8 position-relative">
+                <div class="row g-3 align-items-center">
+                    <div class="col-lg-5">
+                        <div class="position-relative">
+                            <div class="bg-holder rounded-1 overlay" style="background-image:url(../../../assets/img/elearning/courses/course-details.png);">
+                            </div>
+                            <!--/.bg-holder-->
+                            <a class="text-decoration-none position-relative d-block py-7 text-center"
+                               href="@Model.Movie!.TrailerUrl" data-gallery="attachment-bg">
+
+                                <div class="movie-img-wrapper">
+                                    <img src="~/MovieImg/@Model.Movie.MainImg" class="movie-img" />
+                                    <img class="play-btn" src="../../../assets/img/icons/play.svg" width="60" alt="Play" />
+                                </div>
+
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <h6 class="fw-semi-bold text-400"> <a class="text-info" href="#">@Model.Movie.Name</a></h6>
+                        <h6 class="fw-semi-bold text-400">Created by <a class="text-info" href="#">NitFilex</a></h6>
+                        <h6 class="fw-semi-bold text-400">Cinema <a class="text-info" href="#">@Model.Movie.Cinema!.Name</a></h6>
+                        <h2 class="fw-bold text-white">The Movie More Specific For +16 </h2>
+                        <p class="text-white fw-semi-bold fs-10">
+                            <span class="me-1">4.8</span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star-half-alt text-warning star-icon"></span><span class="text-info ms-2">(6,899 reviews)</span>
+                        </p>
+                        <p class="mb-0 fw-medium text-400">
+                            @Model.Movie.Description...<a class="text-info" href="#!">
+                                See more
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <hr class="text-secondary text-opacity-50" />
+                <ul class="list-unstyled d-flex flex-wrap gap-3 fs-10 fw-semi-bold text-300 mt-3 mb-0">
+                    <li><span class="fas fa-graduation-cap text-white me-1"> </span>7,302 Learners </li>
+                    <li><span class="fas fa-user-graduate text-white me-1"> </span>91% Completion</li>
+                    <li><span class="fas fa-headphones text-white me-1"> </span>English</li>
+                    <li><span class="fas fa-closed-captioning text-white me-1"> </span>English</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-lg-3">
+    <div class="col-lg-8 order-1 order-lg-0">
+        <div class="card mb-3">
+            <div class="card-header bg-body-tertiary">
+                <h5 class="mb-0">Description</h5>
+            </div>
+            <div class="card-body position-relative">
+                <div class="bg-holder bg-card d-none d-md-block" style="background-image:url(../../../assets/img/icons/spot-illustrations/corner-7.png);">
+                </div>
+                <!--/.bg-holder-->
+
+                <ul class="list-unstyled position-relative fs-10 p-0 m-0">
+                    <li class="mb-2">
+                        <div class="d-flex"><span class="fas fa-circle me-2 mt-1" data-fa-transform="shrink-8"></span><span>@Model.Movie.Description</span></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header d-flex flex-between-center">
+                <h5 class="mb-0">Director</h5>
+                <button class="btn btn-falcon-primary btn-sm" type="button"><span class="fas fa-user-plus"></span><span class="d-none d-sm-inline-block align-middle ms-1">Follow</span></button>
+            </div>
+            <div class="card-body bg-body-tertiary">
+                <div class="row g-4 text-center text-md-start">
+                    <div class="col-md-auto">
+                        <a href="../../../app/e-learning/trainer-profile.html">
+                            <div class="avatar avatar-4xl">
+                                <img class="rounded-circle" src="../../../assets/img/team/5-thumb.png" alt="" />
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <h5 class="mb-2"> <a href="../../../app/e-learning/trainer-profile.html">Bill Finger</a></h5>
+                        <h6 class="fs-10 text-800 fw-normal mb-3">Artist | Professional Comic Writer</h6>
+                        <p class="fs-10 text-700">Finger, an aspiring writer and part-time shoe salesperson, joined Kane's fledgling studio in 1938. Finger was inducted into the Jack Kirby Hall of Fame in 1994 and the <strong>Will Eisner Award Hall of Fame</strong>in 1999 after death. Finger was named one of the awardees in the company's 50th anniversary edition <strong>Fifty Who Made DC </strong>Great in 1985. In his honor, Comic-Con International created the <strong>Bill Finger Award for Excellence </strong>in Comic Book Writing in 2005. In 2014, Finger got a posthumous <strong>Inkpot Award. </strong></p>
+                        <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                            <span class="badge rounded-pill badge-subtle-light dark__bg-dark border border-300 text-secondary py-2 px-3"><span class="fas fa-star me-1" data-fa-transform="shrink-4"></span><span>4.95</span></span><span class="badge rounded-pill badge-subtle-light dark__bg-dark border border-300 text-secondary py-2 px-3"><span class="fas fa-graduation-cap me-1" data-fa-transform="shrink-4"></span><span>35,400</span></span><span class="badge rounded-pill badge-subtle-light dark__bg-dark border border-300 text-secondary py-2 px-3"><span class="fas fa-file-alt me-1" data-fa-transform="shrink-4"></span><span>15</span></span><span class="badge rounded-pill badge-subtle-light dark__bg-dark border border-300 text-secondary py-2 px-3"><span class="fas fa-map-pin me-1" data-fa-transform="shrink-4"></span><span>5,700</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-end py-1"><a class="btn btn-link btn-sm fw-medium py-2 px-0" href="../../../app/e-learning/course/course-list.html">View all his courses<span class="fas fa-external-link-alt ms-1"></span></a></div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-header bg-body-tertiary d-flex flex-between-center">
+                <h5 class="mb-0">Cast</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="d-none d-sm-inline-block me-1">Filter</span><span class="fs-11 fas fa-filter"></span></button>
+                    <div>
+                        <select class="form-select form-select-sm">
+                            <option value="" selected="selected">Sort by</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="newest">Newest</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body py-0">
+                @foreach (var actor in Model.Actors!)
+                {
+
+                    <div class="row g-3 align-items-center text-center text-md-start py-3 border-bottom border-200">
+                        <div class="col-md-auto">
+                            <a href="#!">
+                                <div class="avatar avatar-3xl">
+                                    <img class="rounded-circle" src="@actor.Actor.Img" alt="" />
+
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col px-x1 py-2">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="fs-9">
+                                        <a class="me-2" href="#!">@actor.Actor.FullName</a><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star text-warning"></span><span class="fa fa-star-half-alt text-warning star-icon"></span>
+                                    </h6>
+                                </div>
+                                <div class="col-md-10">
+                                    <p class="fs-10 text-800">Excellent Course for any beginner like me :p The trainer was very generous and helped whenever DMed.</p>
+                                </div>
+                                <div class="col-12">
+                                    <div class="fs-11 text-600 d-flex flex-column flex-md-row align-items-center gap-2">
+                                        <h6 class="fs-11 text-600 mb-0">Age:@(DateTime.Now.Year - actor.Actor.BirthDate.Year)</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-auto d-flex justify-content-center gap-2">
+                            <button class="btn btn-falcon-default icon-item focus-bg-primary"><span class="fs-11 fas fa-thumbs-up"></span></button>
+                            <button class="btn btn-falcon-default icon-item focus-bg-secondary"><span class="fs-11 fas fa-thumbs-up" data-fa-transform="rotate-180"></span></button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="card-footer bg-body-tertiary text-end py-1"><a class="btn btn-link btn-sm py-2 px-0" href="#!">See All Reviewes<span class="fas fa-external-link-alt ms-1"></span></a></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h6 class="fs-9 mb-0">Similar Movie Type</h6>
+        </div>
+        <div class="card-body py-0 bg-body-tertiary">
+            <div class="swiper theme-slider py-x1" data-swiper='{"autoplay":true,"spaceBetween":10,"slidesPerView":1,"breakpoints":{"460":{"slidesPerView":1.5},"768":{"slidesPerView":2},"1540":{"slidesPerView":2.5}},"loop":true,"navigation":{"nextEl":".swiper-button-next","prevEl":".swiper-button-prev"}}'>
+                <div class="swiper-wrapper">
+                    @foreach (var movie in Model.MoviesWithSameType!)
+                    {
+
+                        <article class="swiper-slide h-auto">
+                            <div class="card h-100 overflow-hidden">
+                                <div class="card-body p-0 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="hoverbox text-center">
+                                            <a class="text-decoration-none" href="@movie.TrailerUrl" data-gallery="attachment-bg"><img class="w-100 h-100 object-fit-cover" src="~/MovieImg/@movie.MainImg" alt="" /></a>
+                                            <div class="hoverbox-content flex-center pe-none bg-holder overlay overlay-2"><img class="z-1" src="../../../assets/img/icons/play.svg" width="60" alt="" /></div>
+                                        </div>
+                                        <div class="p-3">
+                                            <h5 class="fs-9 mb-2"><a class="text-1100" href="/Customer/Home/Details?@movie.Id"> @movie.Name</a></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row g-0 mb-3 align-items-end">
+                                        <div class="col ps-3">
+                                            <h4 class="fs-8 text-warning d-flex align-items-center">
+                                                <span>$@movie.Price</span>
+                                            </h4>
+                                            <p class="mb-0 fs-10 text-800">92,632 Learners Enrolled</p>
+                                        </div>
+                                        <div class="col-auto pe-3"><a class="btn btn-sm btn-falcon-default me-2 hover-danger" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Wishlist"><span class="far fa-heart" data-fa-transform="down-2"></span></a><a class="btn btn-sm btn-falcon-default hover-primary" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart"><span class="fas fa-cart-plus" data-fa-transform="down-2"></span></a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    }
+                </div>
+                <div class="swiper-nav">
+                    <div class="swiper-button-next swiper-button-white"></div>
+                    <div class="swiper-button-prev swiper-button-white"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end py-1"><a class="btn btn-link btn-sm py-2 px-0" href="../../../app/e-learning/course/course-grid.html">All courses<span class="fas fa-external-link-alt ms-1"></span></a></div>
+    </div>
+
+</div>
+
+<style>
+    .movie-img-wrapper {
+        width: 100%;
+        height: 350px; /* ← عدل الارتفاع اللي يناسب التصميم */
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .movie-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* ← دي اللي بتظبط الصورة */
+        object-position: center;
+    }
+
+    .play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+
+</style>
+
