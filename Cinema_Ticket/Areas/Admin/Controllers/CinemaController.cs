@@ -15,7 +15,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
 
         public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
         {
-            var cinemas =await cinemaRepo.GetAsync(cancellationToken: cancellationToken);
+            var cinemas = await cinemaRepo.GetAsync(cancellationToken: cancellationToken);
             return View(cinemas);
         }
         [HttpGet]
@@ -24,7 +24,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Cinema cinema, IFormFile img , CancellationToken cancellationToken)
+        public async Task<IActionResult> Create(Cinema cinema, IFormFile img, CancellationToken cancellationToken)
         {
             if (img is not null && img.Length > 0)
             {
@@ -36,29 +36,25 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
                 }
                 cinema.Img = imgName;
             }
-            if (ModelState.IsValid)
-            {
-                await cinemaRepo.AddAsync(cinema , cancellationToken : cancellationToken);
-                await cinemaRepo.CommitAsync(cancellationToken);
-                TempData["success-notification"] = "Cinema Created Successfully";
-                return RedirectToAction(nameof(ShowAll));
-            }
-            return View();
+            await cinemaRepo.AddAsync(cinema, cancellationToken: cancellationToken);
+            await cinemaRepo.CommitAsync(cancellationToken);
+            TempData["success-notification"] = "Cinema Created Successfully";
+            return RedirectToAction(nameof(ShowAll));
         }
         [HttpGet]
-        public async Task<IActionResult> Edit(int id , CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
-            var cinema =await cinemaRepo.GetOneAsync(c=>c.Id == id , cancellationToken: cancellationToken);
+            var cinema = await cinemaRepo.GetOneAsync(c => c.Id == id, cancellationToken: cancellationToken);
             return View(cinema);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Cinema cinema , IFormFile img , CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(Cinema cinema, IFormFile img, CancellationToken cancellationToken)
         {
-            var oldCinema =await cinemaRepo.GetOneAsync(c=>c.Id ==cinema.Id , tracked:false , cancellationToken: cancellationToken);
+            var oldCinema = await cinemaRepo.GetOneAsync(c => c.Id == cinema.Id, tracked: false, cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
             {
                 var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", oldCinema.Img);
-                if(Path.Exists(oldPath))
+                if (Path.Exists(oldPath))
                     System.IO.File.Delete(oldPath);
                 var imgName = Guid.NewGuid() + Path.GetExtension(img.FileName);
                 var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", imgName);
@@ -75,9 +71,9 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             TempData["success-notification"] = "Cinema Edited Successfully";
             return RedirectToAction(nameof(ShowAll));
         }
-        public async Task<IActionResult> Delete(int id , CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var cinema =await cinemaRepo.GetOneAsync(c=>c.Id == id , cancellationToken: cancellationToken);
+            var cinema = await cinemaRepo.GetOneAsync(c => c.Id == id, cancellationToken: cancellationToken);
             if (cinema is null)
                 return View("ErrorPage", "Home");
             var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
