@@ -28,6 +28,7 @@
                     </div>
                     <div class="col-lg-7">
                         <h6 class="fw-semi-bold text-400"> <a class="text-info" href="#">@Model.Movie.Name</a></h6>
+                        <h6 class="fw-semi-bold text-400">Type <a class="text-info" href="#">@Model.Movie.Type</a></h6>
                         <h6 class="fw-semi-bold text-400">Created by <a class="text-info" href="#">NitFilex</a></h6>
                         <h6 class="fw-semi-bold text-400">Cinema <a class="text-info" href="#">@Model.Movie.Cinema!.Name</a></h6>
                         <h2 class="fw-bold text-white">The Movie More Specific For +16 </h2>
@@ -173,6 +174,7 @@
                                         </div>
                                         <div class="p-3">
                                             <h5 class="fs-9 mb-2"><a class="text-1100" href="/Customer/Home/Details?movieId=@movie.Id"> @movie.Name</a></h5>
+                                            <h5 class="fs-9 mb-2"><a class="text-1100" href="#">Type: @movie.Type</a></h5>
                                         </div>
                                     </div>
                                     <div class="row g-0 mb-3 align-items-end">
@@ -182,7 +184,7 @@
                                             </h4>
                                             <p class="mb-0 fs-10 text-800">92,632 Learners Enrolled</p>
                                         </div>
-                                        <div class="col-auto pe-3"><a class="btn btn-sm btn-falcon-default me-2 hover-danger" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Wishlist"><span class="far fa-heart" data-fa-transform="down-2"></span></a><a class="btn btn-sm btn-falcon-default hover-primary" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart"><span class="fas fa-cart-plus" data-fa-transform="down-2"></span></a></div>
+                                        <div class="col-auto pe-3"><a class="btn btn-sm btn-falcon-default me-2 hover-danger" href="#!" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Wishlist"><span class="far fa-heart" data-fa-transform="down-2"></span></a><a class="btn btn-sm btn-falcon-default hover-primary" href="/Customer/Home/Index?@movie.Id" data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart"><span class="fas fa-cart-plus" data-fa-transform="down-2"></span></a></div>
                                     </div>
                                 </div>
                             </div>
