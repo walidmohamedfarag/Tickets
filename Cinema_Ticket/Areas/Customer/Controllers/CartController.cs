@@ -11,7 +11,7 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
         private readonly IRepositroy<Cart> repoCart;
 
 
-        public CartController(UserManager<ApplicationUser> _userManager , IRepositroy<Cart> _repoCart , IRepositroy<Movie> _repoMovie)
+        public CartController(UserManager<ApplicationUser> _userManager, IRepositroy<Cart> _repoCart, IRepositroy<Movie> _repoMovie)
         {
             userManager = _userManager;
             repoCart = _repoCart;
@@ -22,6 +22,26 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
             var user = await userManager.GetUserAsync(User);
             var cart = await repoCart.GetAsync(c => c.UserId == user!.Id, includes: [c => c.Movie]);
             return View(cart);
+        }
+        public async Task<IActionResult> Remove(int movieId)
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user is null)
+            {
+                TempData["error-notification"] = "User Not Found.";
+                return RedirectToAction("Index");
+            }
+            var removeMovie = await repoCart.GetOneAsync(rm => rm.MovieId == movieId && rm.UserId == user.Id);
+            if (removeMovie is null)
+            {
+                TempData["error-notification"] = "Movie Not Found.";
+                return RedirectToAction("Index");
+            }
+
+            repoCart.Delete(removeMovie);
+            await repoCart.CommitAsync();
+            TempData["success-notification"] = "Movie Is Deleted Successfully.";
+            return RedirectToAction("Index");
         }
     }
 }

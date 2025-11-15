@@ -26,13 +26,15 @@
                         <a href="../../app/e-commerce/product/product-details.html"><img class="img-fluid rounded-1 me-3 d-none d-md-block" src="~/MovieImg/@item.Movie.MainImg" alt="" width="60" /></a>
                         <div class="flex-1">
                             <h5 class="fs-9"><a class="text-900" href="../../app/e-commerce/product/product-details.html">Description: @item.Movie.Description</a></h5>
-                            <div class="fs-11 fs-md--1"><a class="text-danger" href="#!">Remove</a></div>
+                            <div class="fs-11 fs-md--1"><a class="text-danger" href="/Customer/Cart/Remove?movieId=@item.MovieId">Remove</a></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-4 py-3 px-x1">
                     <div class="row align-items-center">
-                        <div class="col-md-4 text-end ps-0 order-0 order-md-1 mb-2 mb-md-0 text-600">$@item.Movie.Price</div>
+                        <div class="col-md-4 ms-auto text-end ps-0 mb-2 mb-md-0 text-600">
+                            $@item.Movie.Price
+                        </div>
                     </div>
                 </div>
             </div>
