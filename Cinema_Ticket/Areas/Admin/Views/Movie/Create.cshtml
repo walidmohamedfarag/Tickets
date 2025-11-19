@@ -24,8 +24,8 @@
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="status" class="form-label">Actros</label>
-                    <select name="actrosid" class="form-select" multiple>
+                    <label for="organizerMultiple">Actors</label>
+                    <select class="form-select js-choice" id="organizerMultiple" multiple="multiple" size="1" name="organizerMultiple" data-options='{"removeItemButton":true,"placeholder":true}'>
                         @foreach (var actor in ViewBag.actros)
                         {
 
@@ -60,20 +60,32 @@
                         <label for="description">You Description Here...</label>
                     </div>
                 </div>
-                    <div class="mb-3">
-                        <label for="Cinema" class="form-label">Cinema</label>
-                        <select name="CinemaId" class="form-select" placeholder="Select Cinema">
-                            @foreach (var cinema in Model)
-                            {
-                                <option value="@cinema.Id">@cinema.Name</option>
-                            }
-                        </select>
-                    </div>
-                   <button type="submit" class="btn btn-primary">Submit</button>
+                <div class="mb-3">
+                    <label for="Cinema" class="form-label">Cinema</label>
+                    <select name="CinemaId" class="form-select" placeholder="Select Cinema">
+                        @foreach (var cinema in Model)
+                        {
+                            <option value="@cinema.Id">@cinema.Name</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const elements = document.querySelectorAll(".js-choice");
+        elements.forEach(el => {
+            new Choices(el, {
+                removeItemButton: true,
+                placeholder: true,
+                searchEnabled: true
+            });
+        });
+    });
+</script>
 
 

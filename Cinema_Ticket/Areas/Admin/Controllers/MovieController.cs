@@ -33,7 +33,7 @@ namespace Movie_Ticket.Areas.Admin.Controllers
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
             var cinemas = await cinemaRepo.GetAsync(cancellationToken: cancellationToken);
-            ViewBag.actros = await actorRepo.GetAsync(tracked: true, cancellationToken: cancellationToken);
+            ViewBag.actros = await actorRepo.GetAsync();
             return View(cinemas);
         }
         [HttpPost]
