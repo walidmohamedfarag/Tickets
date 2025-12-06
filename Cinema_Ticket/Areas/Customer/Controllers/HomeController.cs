@@ -23,10 +23,11 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
         }
         public async Task<IActionResult> Index(int movieId, int countItem = 4, int page = 1)
         {
+            // get movies to display
             var movies = await movieRepo.GetAsync(tracked: false);
-            ViewBag.countItem = countItem;
-            ViewBag.currentPage = page;
-            ViewBag.totalPages = (int)Math.Ceiling((double)movies.Count() / countItem);
+            ViewBag.countItem = countItem; // count of page 
+            ViewBag.currentPage = page; // current page
+            ViewBag.totalPages = (int)Math.Ceiling((double)movies.Count() / countItem); // totale page
             movies = movies.Skip((page - 1) * countItem).Take(countItem);
             var userLogin = await userManager.GetUserAsync(User);
             if (userLogin is null)
@@ -42,13 +43,13 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
                     TempData["error-notification"] = "Movie Already Exists In Cart";
                     return RedirectToAction("Index" , "Cart");
                 }
-                var user = await userManager.GetUserAsync(User);
                 var movie = await repoMovie.GetOneAsync(m => m.Id == movieId, tracked: false);
                 await repoCart.AddAsync(new Cart
                 {
                     MovieId = movieId,
-                    UserId = user!.Id,
-                    Price = movie!.Price
+                    UserId = userLogin.Id,
+                    Price = movie!.Price,
+                    Quantity = 1
                 });
                 await repoCart.CommitAsync();
                 TempData["success-notification"] = "Movie added to cart successfully!";

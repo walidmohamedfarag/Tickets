@@ -1,5 +1,6 @@
 ﻿
-using System.Threading.Tasks;
+
+using Stripe.Checkout;
 
 namespace Cinema_Ticket.Areas.Customer.Controllers
 {
@@ -42,6 +43,39 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
             await repoCart.CommitAsync();
             TempData["success-notification"] = "Movie Is Deleted Successfully.";
             return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> Pay()
+        {
+            var user = await userManager.GetUserAsync(User);
+            var cart = await repoCart.GetAsync(u => u.UserId == user!.Id, includes: [m => m.Movie]);
+            var option = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/success",
+                CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/cancel"
+            };
+            foreach (var item in cart)
+            {
+                option.LineItems.Add(new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "egp",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Movie.Name,
+                            Description = item.Movie.Description,
+                        },
+                        UnitAmount = (long)item.Price * 100,
+                    },
+                    Quantity = item.Quantity,
+                });
+            }
+            var service = new SessionService();
+            var session = await service.CreateAsync(option);
+            return Redirect(session.Url);
         }
     }
 }

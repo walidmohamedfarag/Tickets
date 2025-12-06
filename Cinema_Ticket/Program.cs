@@ -1,6 +1,7 @@
 
 using Cinema_Ticket.MapestrConfigration;
 using Cinema_Ticket.Utility.DBInitailizer;
+using Stripe;
 
 namespace Cinema_Ticket
 {
@@ -20,6 +21,7 @@ namespace Cinema_Ticket
             var scope = app.Services.CreateScope();
             var service = scope.ServiceProvider.GetService<IDBInitailizer>();
             service!.Initialize();
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
