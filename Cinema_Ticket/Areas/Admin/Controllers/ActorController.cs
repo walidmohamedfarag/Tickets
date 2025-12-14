@@ -34,18 +34,9 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Actor actor, ActorBirthDateVM actorBirthDateVM, IFormFile img, CancellationToken cancellationToken)
         {
-            //if (img is not null && img.Length > 0)
-            //{
-            //    var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-            //    var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", imgName);
-            //    using (var stream = System.IO.File.Create(imgPath))
-            //    {
-            //        img.CopyTo(stream);
-            //    }
-            //    actor.Img = imgName;
-            //}
-            var url = photoService.AddPhotoForUser(img);
-            actor.Img = url;
+            var photo = photoService.AddPhoto(img);
+            actor.Img = photo.Url;
+            actor.ImgPublicId = photo.PublicId;
             var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
             actor.BirthDate = birthDate;
             await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);
@@ -64,12 +55,12 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             return View(actor);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(Actor actor, IFormFile img , ActorBirthDateVM actorBirthDateVM, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(Actor actor, IFormFile img, ActorBirthDateVM actorBirthDateVM, CancellationToken cancellationToken)
         {
             var oldActor = await actorRepo.GetOneAsync(a => a.Id == actor.Id, tracked: false, cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
             {
-                if (oldActor.Img is not null)
+                if (oldActor!.Img is not null)
                 {
                     var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldActor.Img);
                     if (Path.Exists(oldPath))
@@ -97,11 +88,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         {
             var oldImg = await actorRepo.GetOneAsync(a => a.Id == id, cancellationToken: cancellationToken);
             if (oldImg!.Img is not null)
-            {
-                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldImg.Img);
-                if (Path.Exists(oldPath))
-                    System.IO.File.Delete(oldPath);
-            }
+                await photoService.DeletePhoto(oldImg.ImgPublicId!);
             actorRepo.Delete(oldImg);
             await actorRepo.CommitAsync(cancellationToken);
             TempData["success-notification"] = "Actor Deleted Successfully.";

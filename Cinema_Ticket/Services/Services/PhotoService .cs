@@ -1,6 +1,7 @@
 ﻿using Cinema_Ticket.Services.IServices;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Services.Services
 {
@@ -18,7 +19,7 @@ namespace Cinema_Ticket.Services.Services
             cloudinary = new Cloudinary(account);
         }
 
-        public string AddPhotoForUser(IFormFile file)
+        public ActorPhoto AddPhoto(IFormFile file)
         {
             var uploadResult = new ImageUploadResult();
             if(file is not null && file.Length > 0)
@@ -27,12 +28,25 @@ namespace Cinema_Ticket.Services.Services
                 {
                     var uploadParams = new ImageUploadParams()
                     {
-                        File = new FileDescription(file.FileName, stream)
+                        File = new FileDescription(file.FileName, stream),
+                        Folder = "Actor"
                     };
                     uploadResult = cloudinary.Upload(uploadParams);
                 }
             }
-            return uploadResult.Url.ToString();
+            return new ActorPhoto 
+            {
+                PublicId = uploadResult.PublicId,
+                Url = uploadResult.Url.ToString() 
+            };
+        }
+        public async Task<bool> DeletePhoto(string file)
+        {
+            if(file is null || file == "")
+                return false;
+            var deleteImage = new DeletionParams(file);
+            var result = await cloudinary.DestroyAsync(deleteImage);
+            return result.Result == "ok";
         }
     }
 }
