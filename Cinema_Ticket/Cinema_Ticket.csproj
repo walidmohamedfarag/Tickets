@@ -20,10 +20,4 @@
 		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
 		<PackageReference Include="Stripe.net" Version="50.0.0" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="wwwroot\CinemaImg\" />
-	  <Folder Include="wwwroot\MovieImg\SubImges\" />
-	  <Folder Include="wwwroot\ActorImage\" />
-	  <Folder Include="wwwroot\UserImg\" />
-	</ItemGroup>
 </Project>
