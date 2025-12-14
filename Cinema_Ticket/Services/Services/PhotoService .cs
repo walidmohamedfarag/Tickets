@@ -19,7 +19,7 @@ namespace Cinema_Ticket.Services.Services
             cloudinary = new Cloudinary(account);
         }
 
-        public ActorPhoto AddPhoto(IFormFile file)
+        public async Task<ActorPhoto> AddPhoto(IFormFile file , string? folder = null)
         {
             var uploadResult = new ImageUploadResult();
             if(file is not null && file.Length > 0)
@@ -29,9 +29,9 @@ namespace Cinema_Ticket.Services.Services
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(file.FileName, stream),
-                        Folder = "Actor"
+                        Folder = folder
                     };
-                    uploadResult = cloudinary.Upload(uploadParams);
+                    uploadResult = await cloudinary.UploadAsync(uploadParams);
                 }
             }
             return new ActorPhoto 

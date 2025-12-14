@@ -1,5 +1,6 @@
 ﻿
 using Cinema_Ticket.Models;
+using Cinema_Ticket.Services.IServices;
 using Microsoft.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -13,15 +14,16 @@ namespace Movie_Ticket.Areas.Admin.Controllers
         private readonly IRepositroy<MovieSubImg> movieSubImgRepo;
         private readonly IRepositroy<MovieActor> movieActorRepo;
         private readonly IRepositroy<Actor> actorRepo;
+        private readonly IPhotoService photoService;
 
-
-        public MovieController(IRepositroy<Movie> _movieRepo, IRepositroy<Cinema> _cinemaRepo, IRepositroy<MovieSubImg> _movieSubImgRepo, IRepositroy<MovieActor> _movieActorRepo, IRepositroy<Actor> _actorRepo)
+        public MovieController(IRepositroy<Movie> _movieRepo, IRepositroy<Cinema> _cinemaRepo, IRepositroy<MovieSubImg> _movieSubImgRepo, IRepositroy<MovieActor> _movieActorRepo, IRepositroy<Actor> _actorRepo, IPhotoService _photoService)
         {
             movieRepo = _movieRepo;
             cinemaRepo = _cinemaRepo;
             movieSubImgRepo = _movieSubImgRepo;
             movieActorRepo = _movieActorRepo;
             actorRepo = _actorRepo;
+            photoService = _photoService;
         }
 
         public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
@@ -42,13 +44,9 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             #region Add Main Image And Movie
             if (MainImg is not null && MainImg.Length > 0)
             {
-                var mainimgName = Guid.NewGuid().ToString() + Path.GetExtension(MainImg.FileName);
-                var pathMainImg = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", mainimgName);
-                using (var stream = System.IO.File.Create(pathMainImg))
-                {
-                    MainImg.CopyTo(stream);
-                }
-                movie.MainImg = mainimgName;
+                var photo = await photoService.AddPhoto(MainImg, "Movie-Image");
+                movie.MainImg = photo.Url;
+                movie.PublicId = photo.PublicId;
             }
             await movieRepo.AddAsync(movie, cancellationToken: cancellationToken);
             await movieRepo.CommitAsync(cancellationToken);
@@ -58,19 +56,13 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                 await movieActorRepo.AddAsync(new MovieActor { MovieId = movie.Id, ActorId = item }, cancellationToken: cancellationToken);
             await movieActorRepo.CommitAsync(cancellationToken);
 
-
             #region Add Sub Images
             if (subImgs is not null && subImgs.Any())
             {
                 foreach (var subimg in subImgs)
                 {
-                    var subimgName = Guid.NewGuid() + Path.GetExtension(subimg.FileName);
-                    var pathSubImg = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", subimgName);
-                    using (var stream = System.IO.File.Create(pathSubImg))
-                    {
-                        subimg.CopyTo(stream);
-                    }
-                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = subimgName, MovieId = movie.Id }, cancellationToken: cancellationToken);
+                    var photo = await photoService.AddPhoto(subimg, "Movie-SubImage");
+                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = photo.Url, PublicId = photo.PublicId, MovieId = movie.Id }, cancellationToken: cancellationToken);
                 }
                 await movieSubImgRepo.CommitAsync(cancellationToken);
             }
@@ -96,25 +88,15 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             #region Edit Main Image
             if (mainimg is not null && mainimg.Length > 0)
             {
-                if (oldMovie.MainImg is not null)
-                {
-
-                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", oldMovie.MainImg);
-                    if (Path.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
-                }
-                var mainimgName = Guid.NewGuid() + Path.GetExtension(mainimg.FileName);
-                var mainimgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", mainimgName);
-                using (var stream = System.IO.File.Create(mainimgPath))
-                {
-                    mainimg.CopyTo(stream);
-                }
-                movie.MainImg = mainimgName;
+                if (oldMovie!.MainImg is not null)
+                    await photoService.DeletePhoto(oldMovie.PublicId!);
+                var photo = await photoService.AddPhoto(mainimg, "Movie-Image");
+                movie.MainImg = photo.Url;
+                movie.PublicId = oldMovie.PublicId;
             }
             else
                 movie.MainImg = oldMovie.MainImg;
             movieRepo.Update(movie);
-            await movieRepo.CommitAsync(cancellationToken);
             #endregion
 
             #region Edit Sub Image
@@ -126,27 +108,16 @@ namespace Movie_Ticket.Areas.Admin.Controllers
                     return View("ErrorPage", "Home");
                 // Loop To Delete Old Sub Image
                 foreach (var oimg in oldSubImgs)
-                {
-                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", oimg.Img);
-                    if (Path.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
-                    movieSubImgRepo.Delete(oimg);
-                }
-                await movieSubImgRepo.CommitAsync(cancellationToken);
+                    await photoService.DeletePhoto(oimg.PublicId!);
                 // Add New Sub Image
                 foreach (var subimg in subImgs)
                 {
-                    var subimgName = Guid.NewGuid() + Path.GetExtension(subimg.FileName);
-                    var pathSubImg = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", subimgName);
-                    using (var stream = System.IO.File.Create(pathSubImg))
-                    {
-                        subimg.CopyTo(stream);
-                    }
-                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = subimgName, MovieId = movie.Id }, cancellationToken: cancellationToken);
+                    var photo = await photoService.AddPhoto(subimg, "Movie-SubImage");
+                    await movieSubImgRepo.AddAsync(new MovieSubImg { Img = photo.Url, PublicId = photo.PublicId, MovieId = movie.Id }, cancellationToken: cancellationToken);
                 }
-                await movieSubImgRepo.CommitAsync(cancellationToken);
 
             }
+            await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
             TempData["success-notification"] = "Movie Edited Successfully";
@@ -159,22 +130,17 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             var movie = await movieRepo.GetOneAsync(c => c.Id == id, cancellationToken: cancellationToken);
             if (movie is null)
                 return View("ErrorPage", "Home");
-            // Delete Main Image 
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg", movie.MainImg);
-            if (Path.Exists(oldPath))
-                System.IO.File.Delete(oldPath);
-            movieRepo.Delete(movie);
-            await movieRepo.CommitAsync(cancellationToken);
             // Delete Sub Images 
             var movieSubImges = await movieSubImgRepo.GetAsync(m => m.MovieId == id, cancellationToken: cancellationToken);
             foreach (var oimg in movieSubImges)
             {
-                var oldSubImgs = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", oimg.Img);
-                if (Path.Exists(oldSubImgs))
-                    System.IO.File.Delete(oldSubImgs);
+                await photoService.DeletePhoto(oimg.PublicId!);
                 movieSubImgRepo.Delete(oimg);
             }
-            await movieSubImgRepo.CommitAsync(cancellationToken);
+            // Delete Main Image 
+            await photoService.DeletePhoto(movie.PublicId!);
+            movieRepo.Delete(movie);
+            await movieRepo.CommitAsync(cancellationToken);
             #endregion
 
             TempData["success-notification"] = "Movie Deleted Successfully";
@@ -187,14 +153,12 @@ namespace Movie_Ticket.Areas.Admin.Controllers
             var movieSubImg = await movieSubImgRepo.GetOneAsync(c => c.MovieId == id && c.Img == img, cancellationToken: cancellationToken);
             if (movieSubImg is null)
                 return View("ErrorPage", "Home");
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\MovieImg\SubImges", movieSubImg.Img);
-            if (Path.Exists(oldPath))
-                System.IO.File.Delete(oldPath);
+            await photoService.DeletePhoto(movieSubImg.PublicId!);
             movieSubImgRepo.Delete(movieSubImg);
             await movieSubImgRepo.CommitAsync(cancellationToken);
             #endregion
 
-            TempData["success-notification"] = "Sub Image Deleted Successfully"; 
+            TempData["success-notification"] = "Sub Image Deleted Successfully";
             return RedirectToAction(nameof(Edit), new { id = id });
 
         }

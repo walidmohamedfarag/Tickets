@@ -2,7 +2,7 @@
 {
     public interface IPhotoService
     {
-        ActorPhoto AddPhoto(IFormFile file);
+        Task<ActorPhoto> AddPhoto(IFormFile file , string? folder = null);
         Task<bool> DeletePhoto(string file);
     }
 }

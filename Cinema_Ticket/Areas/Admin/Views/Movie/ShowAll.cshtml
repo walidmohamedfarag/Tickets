@@ -39,7 +39,7 @@
                             <td>@(item.Date_Time.TimeOfDay - new TimeSpan(12,0,0))</td>
                             <td>@(item.CinemaId == item.Cinema.Id ? item.Cinema.Name : "")</td>
                             <td>
-                                <img src="~/MovieImg/@item.MainImg" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
+                                <img src="@item.MainImg" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
                             </td>
                             @if (item.Date_Time.ToString("yyyy-MM-dd") == DateTime.Now.ToString("yyyy-MM-dd"))
                             {

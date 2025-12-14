@@ -1,4 +1,6 @@
 ﻿
+using Cinema_Ticket.Services.IServices;
+using Microsoft.Graph.Models;
 using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Areas.Admin.Controllers
@@ -7,10 +9,12 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
     public class CinemaController : Controller
     {
         private readonly IRepositroy<Cinema> cinemaRepo;
+        private readonly IPhotoService photoService;
 
-        public CinemaController(IRepositroy<Cinema> _cinemaRepo)
+        public CinemaController(IRepositroy<Cinema> _cinemaRepo, IPhotoService _photoService)
         {
             cinemaRepo = _cinemaRepo;
+            photoService = _photoService;
         }
 
         public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
@@ -28,13 +32,9 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         {
             if (img is not null && img.Length > 0)
             {
-                var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", imgName);
-                using (var stream = System.IO.File.Create(imgPath))
-                {
-                    img.CopyTo(stream);
-                }
-                cinema.Img = imgName;
+                var photo = await photoService.AddPhoto(img, "Cinema-Image");
+                cinema.Img = photo.Url;
+                cinema.PublicId = photo.PublicId;
             }
             await cinemaRepo.AddAsync(cinema, cancellationToken: cancellationToken);
             await cinemaRepo.CommitAsync(cancellationToken);
@@ -53,19 +53,13 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             var oldCinema = await cinemaRepo.GetOneAsync(c => c.Id == cinema.Id, tracked: false, cancellationToken: cancellationToken);
             if (img is not null && img.Length > 0)
             {
-                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", oldCinema.Img);
-                if (Path.Exists(oldPath))
-                    System.IO.File.Delete(oldPath);
-                var imgName = Guid.NewGuid() + Path.GetExtension(img.FileName);
-                var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", imgName);
-                using (var stream = System.IO.File.Create(imgPath))
-                {
-                    img.CopyTo(stream);
-                }
-                cinema.Img = imgName;
+                await photoService.DeletePhoto(oldCinema!.PublicId!);
+                var photo = await photoService.AddPhoto(img, "Cinema");
+                cinema.Img = photo.Url;
+                cinema.PublicId = photo.PublicId;
             }
             else
-                cinema.Img = oldCinema.Img;
+                cinema.Img = oldCinema!.Img;
             cinemaRepo.Update(cinema);
             await cinemaRepo.CommitAsync(cancellationToken);
             TempData["success-notification"] = "Cinema Edited Successfully";
@@ -77,12 +71,7 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             if (cinema is null)
                 return View("ErrorPage", "Home");
             if (cinema.Img is not null)
-            {
-
-                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
-                if (Path.Exists(oldPath))
-                    System.IO.File.Delete(oldPath);
-            }
+                await photoService.DeletePhoto(cinema.PublicId!);
             cinemaRepo.Delete(cinema);
             await cinemaRepo.CommitAsync(cancellationToken);
             TempData["success-notification"] = "Cinema Deleted Successfully";

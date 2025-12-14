@@ -111,7 +111,7 @@
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Cinema/ShowAll") ? "active text-primary" : "text-dark")"
                                            href="/Admin/Cinema/ShowAll">
                                             <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Cinemas</span>
+                                                <span class="nav-link-text ps-1 text-secondary">Cinemas</span>
                                             </div>
                                         </a>
                                     </li>
@@ -120,7 +120,7 @@
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Movie/ShowAll") ? "active text-primary" : "text-dark")"
                                            href="/Admin/Movie/ShowAll">
                                             <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Movies</span>
+                                                <span class="nav-link-text ps-1 text-secondary">Movies</span>
                                             </div>
                                         </a>
                                     </li>
@@ -129,7 +129,16 @@
                                         <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Actor/ShowAll") ? "active text-primary" : "text-dark")"
                                            href="/Admin/Actor/ShowAll">
                                             <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1">Actors</span>
+                                                <span class="nav-link-text ps-1 text-secondary">Actors</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <!-- Show Users page-->
+                                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/User/ShowAll") ? "active text-primary" : "text-dark")"
+                                           href="/Admin/User/ShowAll">
+                                            <div class="d-flex align-items-center">
+                                                <span class="nav-link-text ps-1 text-secondary">Users</span>
                                             </div>
                                         </a>
                                     </li>

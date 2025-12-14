@@ -45,7 +45,7 @@
                 </div>
                 <div class="mb-3">
                     <img id="preview"
-                         src="~/MovieImg/@Model.Movie.MainImg"
+                         src="@Model.Movie.MainImg"
                          alt="Current Image"
                          style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
                 </div>
@@ -61,7 +61,7 @@
                              src="~/MovieImg/SubImges/@simg.Img"
                              alt="Current Image"
                              style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
-                        <a href="/Admin/Movie/DeleteSubImg?id=@simg.MovieId&img=@simg.Img" id="addButtonColor" class="btn btn-sm btn-danger"
+                        <a href="?id=@simg.MovieId&img=@simg.Img" id="addButtonColor" class="btn btn-sm btn-danger"
                            style="position: absolute; top: 5px; right: 5px">X</a>
 
                     </div>

@@ -34,9 +34,12 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Actor actor, ActorBirthDateVM actorBirthDateVM, IFormFile img, CancellationToken cancellationToken)
         {
-            var photo = photoService.AddPhoto(img);
-            actor.Img = photo.Url;
-            actor.ImgPublicId = photo.PublicId;
+            if (img is not null && img.Length > 0)
+            {
+                var photo = await photoService.AddPhoto(img , "Actor-Image");
+                actor.Img = photo.Url;
+                actor.ImgPublicId = photo.PublicId;
+            }
             var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
             actor.BirthDate = birthDate;
             await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);
@@ -61,22 +64,13 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             if (img is not null && img.Length > 0)
             {
                 if (oldActor!.Img is not null)
-                {
-                    var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", oldActor.Img);
-                    if (Path.Exists(oldPath))
-                        System.IO.File.Delete(oldPath);
-                }
-
-                var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", imgName);
-                using (var stream = System.IO.File.Create(imgPath))
-                {
-                    img.CopyTo(stream);
-                }
-                actor.Img = imgName;
+                    await photoService.DeletePhoto(oldActor!.Img);
+                var photo = await photoService.AddPhoto(img);
+                actor.Img = photo.Url;
+                actor.ImgPublicId = photo.PublicId;
             }
             else
-                actor.Img = oldActor.Img;
+                actor.Img = oldActor!.Img;
             var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
             actor.BirthDate = birthDate;
             actorRepo.Update(actor);
