@@ -76,9 +76,13 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
             var cinema = await cinemaRepo.GetOneAsync(c => c.Id == id, cancellationToken: cancellationToken);
             if (cinema is null)
                 return View("ErrorPage", "Home");
-            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
-            if (Path.Exists(oldPath))
-                System.IO.File.Delete(oldPath);
+            if (cinema.Img is not null)
+            {
+
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\CinemaImg", cinema.Img);
+                if (Path.Exists(oldPath))
+                    System.IO.File.Delete(oldPath);
+            }
             cinemaRepo.Delete(cinema);
             await cinemaRepo.CommitAsync(cancellationToken);
             TempData["success-notification"] = "Cinema Deleted Successfully";

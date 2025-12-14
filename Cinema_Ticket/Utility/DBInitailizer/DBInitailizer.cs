@@ -25,7 +25,7 @@ namespace Cinema_Ticket.Utility.DBInitailizer
 
                 if (contextDB.Database.GetPendingMigrations().Any())
                     contextDB.Database.Migrate();
-                if (roleManager.Roles.IsNullOrEmpty())
+                if (roleManager.Roles is null)
                 {
                     roleManager.CreateAsync(new(StaticRole.SUPER_ADMIN)).GetAwaiter().GetResult();
                     roleManager.CreateAsync(new(StaticRole.ADMIN)).GetAwaiter().GetResult();

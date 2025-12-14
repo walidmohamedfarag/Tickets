@@ -1,4 +1,6 @@
 ﻿
+using Cinema_Ticket.Services.IServices;
+using Cinema_Ticket.Services.Services;
 using Cinema_Ticket.Utility;
 using Cinema_Ticket.Utility.DBInitailizer;
 using System.Text.RegularExpressions;
@@ -30,6 +32,7 @@ namespace Cinema_Ticket
             services.AddScoped<IRepositroy<ApplicationUserOTP>, Repositroy<ApplicationUserOTP>>();
             services.AddScoped<IRepositroy<Cart>, Repositroy<Cart>>();
             services.AddScoped<IRepositroy<MovieActor>, Repositroy<MovieActor>>();
+            services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IDBInitailizer, DBInitailizer>();
             services.AddDbContext<ApplicationDB>(option =>
             {

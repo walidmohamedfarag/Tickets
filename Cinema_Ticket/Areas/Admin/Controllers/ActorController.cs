@@ -1,5 +1,7 @@
 ﻿
 
+using Cinema_Ticket.Services.IServices;
+
 namespace Cinema_Ticket.Areas.Admin.Controllers
 {
     [Area("Admin")]
@@ -8,12 +10,14 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         private readonly IRepositroy<Actor> actorRepo;
         private readonly IRepositroy<MovieActor> movieActorRepo;
         private readonly IRepositroy<Movie> movieRepo;
+        private readonly IPhotoService photoService;
 
-        public ActorController(IRepositroy<Actor> _actorRepo, IRepositroy<MovieActor> _movieActorRepo, IRepositroy<Movie> _movieRepo)
+        public ActorController(IRepositroy<Actor> _actorRepo, IRepositroy<MovieActor> _movieActorRepo, IRepositroy<Movie> _movieRepo, IPhotoService _photoService)
         {
             actorRepo = _actorRepo;
             movieActorRepo = _movieActorRepo;
             movieRepo = _movieRepo;
+            photoService = _photoService;
         }
 
         public async Task<IActionResult> ShowAll(CancellationToken cancellationToken)
@@ -30,16 +34,18 @@ namespace Cinema_Ticket.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Actor actor, ActorBirthDateVM actorBirthDateVM, IFormFile img, CancellationToken cancellationToken)
         {
-            if (img is not null && img.Length > 0)
-            {
-                var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
-                var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", imgName);
-                using (var stream = System.IO.File.Create(imgPath))
-                {
-                    img.CopyTo(stream);
-                }
-                actor.Img = imgName;
-            }
+            //if (img is not null && img.Length > 0)
+            //{
+            //    var imgName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+            //    var imgPath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\ActorImage", imgName);
+            //    using (var stream = System.IO.File.Create(imgPath))
+            //    {
+            //        img.CopyTo(stream);
+            //    }
+            //    actor.Img = imgName;
+            //}
+            var url = photoService.AddPhotoForUser(img);
+            actor.Img = url;
             var birthDate = new DateOnly(actorBirthDateVM.Year, actorBirthDateVM.Month, actorBirthDateVM.Day);
             actor.BirthDate = birthDate;
             await actorRepo.AddAsync(actor, cancellationToken: cancellationToken);

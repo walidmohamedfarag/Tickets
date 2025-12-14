@@ -30,7 +30,7 @@
                             <td class="name-cell"><a asp-action="ActorDetails" asp-controller="Actor" asp-route-id="@item.Id">@item.FullName</a></td>
                             <th scope="row">@(DateTime.Now.Year - item.BirthDate.Year )</th>
                             <td>
-                                <img src="~/ActorImage/@item.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
+                                <img src="@item.Img" width="65" height="65" style="cursor:pointer" onclick="openImageModal(this)">
                             </td>
                             <td>
                                 <a href="/Admin/Actor/Edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
