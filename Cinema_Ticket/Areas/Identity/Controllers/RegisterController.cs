@@ -97,7 +97,7 @@ namespace Cinema_Ticket.Areas.Identity.Controllers
             TempData["success-notification"] = "Logged in successfully.";
             return RedirectToAction("Index","Home" , new {area = "Customer" });
         }
-        public IActionResult LogOut()
+        public IActionResult Logout()
         {
             signManager.SignOutAsync();
             TempData["success-notification"] = "Logged out successfully.";

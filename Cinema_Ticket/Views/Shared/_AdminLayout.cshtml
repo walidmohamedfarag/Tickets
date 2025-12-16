@@ -100,48 +100,55 @@
                     <div class="navbar-vertical-content scrollbar">
                         <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
                             <li class="nav-item">
-                                <!-- parent pages--><a class="nav-link dropdown-indicator" href="#dashboard" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="dashboard">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-icon"><span class="fas fa-chart-pie"></span></span><span class="nav-link-text ps-1">Dashboard</span>
-                                    </div>
-                                </a>
+                                @if (User.IsInRole("SuperAdmin"))
+                                {
+                                    <!-- parent pages-->
+                                    <a class="nav-link dropdown-indicator" href="#dashboard" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="dashboard">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-icon"><span class="fas fa-chart-pie"></span></span><span class="nav-link-text ps-1">Dashboard</span>
+                                        </div>
+                                    </a>
+                                }
                                 <ul class="nav collapse show" id="dashboard">
-                                    <li class="nav-item">
+                                    @if (User.IsInRole("SuperAdmin"))
+                                    {
                                         <!-- Add cinema page-->
-                                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Cinema/ShowAll") ? "active text-primary" : "text-dark")"
-                                           href="/Admin/Cinema/ShowAll">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1 text-secondary">Cinemas</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
+                                        <li class="nav-item">
+                                            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Cinema/ShowAll") ? "active text-primary" : "text-dark")"
+                                               href="/Admin/Cinema/ShowAll">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="nav-link-text ps-1 text-secondary">Cinemas</span>
+                                                </div>
+                                            </a>
+                                        </li>
                                         <!-- Add Movie page-->
-                                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Movie/ShowAll") ? "active text-primary" : "text-dark")"
-                                           href="/Admin/Movie/ShowAll">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1 text-secondary">Movies</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
+                                        <li class="nav-item">
+                                            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Movie/ShowAll") ? "active text-primary" : "text-dark")"
+                                               href="/Admin/Movie/ShowAll">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="nav-link-text ps-1 text-secondary">Movies</span>
+                                                </div>
+                                            </a>
+                                        </li>
                                         <!-- Add Actor page-->
-                                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Actor/ShowAll") ? "active text-primary" : "text-dark")"
-                                           href="/Admin/Actor/ShowAll">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1 text-secondary">Actors</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
+                                        <li class="nav-item">
+                                            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/Actor/ShowAll") ? "active text-primary" : "text-dark")"
+                                               href="/Admin/Actor/ShowAll">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="nav-link-text ps-1 text-secondary">Actors</span>
+                                                </div>
+                                            </a>
+                                        </li>
                                         <!-- Show Users page-->
-                                        <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/User/ShowAll") ? "active text-primary" : "text-dark")"
-                                           href="/Admin/User/ShowAll">
-                                            <div class="d-flex align-items-center">
-                                                <span class="nav-link-text ps-1 text-secondary">Users</span>
-                                            </div>
-                                        </a>
-                                    </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link @(Context.Request.Path.StartsWithSegments("/Admin/User/ShowAll") ? "active text-primary" : "text-dark")"
+                                               href="/Admin/User/ShowAll">
+                                                <div class="d-flex align-items-center">
+                                                    <span class="nav-link-text ps-1 text-secondary">Users</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    }
                                     <li class="nav-item">
                                         <!-- label-->
                                         <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
@@ -993,7 +1000,7 @@
 
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="~/pages/user/settings.html">Settings</a>
-                                        <a class="dropdown-item" href="~/pages/authentication/card/logout.html">Logout</a>
+                                        <a class="dropdown-item" href="/Identity/Register/Logout">Logout</a>
                                     </div>
                                 </div>
                             </li>
