@@ -44,38 +44,45 @@ namespace Cinema_Ticket.Areas.Customer.Controllers
             TempData["success-notification"] = "Movie Is Deleted Successfully.";
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> Pay()
+        public async Task<IActionResult> Checkout()
         {
             var user = await userManager.GetUserAsync(User);
             var cart = await repoCart.GetAsync(u => u.UserId == user!.Id, includes: [m => m.Movie]);
-            var option = new SessionCreateOptions
+
+            #region Old Pay
+            if (false)
             {
-                PaymentMethodTypes = new List<string> { "card" },
-                LineItems = new List<SessionLineItemOptions>(),
-                Mode = "payment",
-                SuccessUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/success",
-                CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/cancel"
-            };
-            foreach (var item in cart)
-            {
-                option.LineItems.Add(new SessionLineItemOptions
+
+                var option = new SessionCreateOptions
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
+                    PaymentMethodTypes = new List<string> { "card" },
+                    LineItems = new List<SessionLineItemOptions>(),
+                    Mode = "payment",
+                    SuccessUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/success",
+                    CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/cancel"
+                };
+                foreach (var item in cart)
+                {
+                    option.LineItems.Add(new SessionLineItemOptions
                     {
-                        Currency = "egp",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Name = item.Movie.Name,
-                            Description = item.Movie.Description,
+                            Currency = "egp",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Movie.Name,
+                                Description = item.Movie.Description,
+                            },
+                            UnitAmount = (long)item.Price * 100,
                         },
-                        UnitAmount = (long)item.Price * 100,
-                    },
-                    Quantity = item.Quantity,
-                });
+                        Quantity = item.Quantity,
+                    });
+                }
+                var service = new SessionService();
+                var session = await service.CreateAsync(option);
             }
-            var service = new SessionService();
-            var session = await service.CreateAsync(option);
-            return Redirect(session.Url);
+            #endregion
+            return View(cart);
         }
     }
 }
