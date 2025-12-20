@@ -1,7 +1,6 @@
 ﻿using Cinema_Ticket.Services.IServices;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using System.Threading.Tasks;
 
 namespace Cinema_Ticket.Services.Services
 {
